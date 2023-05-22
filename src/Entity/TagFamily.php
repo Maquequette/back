@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\TagFamilyRepository;
+use App\State\ActiveOnlyProvider;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -21,9 +22,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     normalizationContext: ['groups' => ['TagFamily']],
-    validationContext: ['groups' => ['Activated']]
-)]
-#[
+    provider: ActiveOnlyProvider::class),
     GetCollection(normalizationContext: ['groups' => ['TagFamilies']]),
     Get, Post, Put, Delete, Patch
 ]
