@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ChallengeTypeRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
@@ -11,6 +12,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ChallengeTypeRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource]
 class ChallengeType
 {
     #[ORM\Id]
@@ -77,6 +80,9 @@ class ChallengeType
         return $this;
     }
 
+    use Active;
+    use Timestamp;
+
     /**
      * @return Collection<int, Challenge>
      */
@@ -106,7 +112,4 @@ class ChallengeType
 
         return $this;
     }
-
-    use Active;
-    use Timestamp;
 }

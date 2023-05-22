@@ -2,28 +2,50 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\TagRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    normalizationContext: ['groups' => ['TagFamily']],
+    validationContext: ['groups' => ['Activated']]
+)]
+#[
+    GetCollection(normalizationContext: ['groups' => ['Tags']]),
+    Get(normalizationContext: ['groups' => ['Tag']]),
+    Post, Put, Delete, Patch
+]
 class Tag
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Tag, Tags, TagFamily'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['Tag, Tags, TagFamily'])]
     private ?string $label = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Tag, TagFamily'])]
     private ?Color $color = null;
 
     #[ORM\ManyToOne(inversedBy: 'tags')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Tag'])]
     private ?TagFamily $family = null;
 
     public function getId(): ?int

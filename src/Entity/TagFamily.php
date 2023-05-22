@@ -2,26 +2,45 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\TagFamilyRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TagFamilyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    normalizationContext: ['groups' => ['TagFamily']],
+    validationContext: ['groups' => ['Activated']]
+)]
+#[
+    GetCollection(normalizationContext: ['groups' => ['TagFamilies']]),
+    Get, Post, Put, Delete, Patch
+]
 class TagFamily
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['TagFamily', 'TagFamilies'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['TagFamily', 'TagFamilies'])]
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'family', targetEntity: Tag::class)]
+    #[Groups(['TagFamily'])]
     private Collection $tags;
 
     public function __construct()

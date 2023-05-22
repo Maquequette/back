@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\DifficultyRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
@@ -11,6 +12,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DifficultyRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource]
 class Difficulty
 {
     #[ORM\Id]

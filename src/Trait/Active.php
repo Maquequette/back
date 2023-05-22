@@ -4,11 +4,12 @@ namespace App\Trait;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\IsTrue;
 
 trait Active
 {
     #[ORM\Column]
-    #[Groups(["User:Me"])]
+    #[IsTrue(groups: ['Activated'])]
     private ?bool $active = true;
 
     public function isActive(): ?bool

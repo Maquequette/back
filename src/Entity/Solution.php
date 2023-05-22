@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SolutionRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
@@ -10,6 +11,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SolutionRepository::class)]
+#[ORM\HasLifecycleCallbacks]
+#[ApiResource]
 class Solution
 {
     #[ORM\Id]
