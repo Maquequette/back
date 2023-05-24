@@ -25,8 +25,8 @@ class AppFixtures extends Fixture
         //<editor-fold desc="User">
             // Creates "BASIC" user
             $user = new User();
-            /*$user->setFirstName('user');
-            $user->setLastName('api');*/
+            $user->setFirstName('user');
+            $user->setLastName('api');
             $user->setEmail("user@api.com");
             $user->setRoles(["ROLE_USER"]);
             $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
@@ -34,8 +34,8 @@ class AppFixtures extends Fixture
 
             // Creates "ADMIN" user
             $userAdmin = new User();
-            /*$userAdmin->setFirstName('admin');
-            $userAdmin->setLastName('api');*/
+            $userAdmin->setFirstName('admin');
+            $userAdmin->setLastName('api');
             $userAdmin->setEmail("admin@api.com");
             $userAdmin->setRoles(["ROLE_ADMIN"]);
             $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
