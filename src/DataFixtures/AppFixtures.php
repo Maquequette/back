@@ -2,7 +2,9 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Category;
 use App\Entity\Color;
+use App\Entity\Difficulty;
 use App\Entity\Tag;
 use App\Entity\TagFamily;
 use App\Entity\User;
@@ -69,6 +71,33 @@ class AppFixtures extends Fixture
                 $manager->persist($tag);
             }
         //</editor-fold>
+
+        //<editor-fold desc="Difficulty">
+            $difficulties = [];
+            for ($i = 1; $i <= 8; $i++) {
+                $difficulty = new Difficulty();
+                $difficulty->setLabel('Difficulty '.$i);
+                $difficulty->setDescription('random description');
+                $difficulty->setSortLevel($i);
+                $difficulty->setColor($colors[array_rand($colors)]);
+                $manager->persist($difficulty);
+                $difficulties[] = $difficulty;
+            }
+        //</editor-fold>
+
+        //<editor-fold desc="Category">
+            $categories = [];
+            $categoriesTitle = ['Web Front', 'Web Design', 'UX Design', 'Mobile'];
+            foreach ($categoriesTitle as $categoryTitle){
+                $category = new Category();
+                $category->setLabel($categoryTitle);
+                $category->setDescription($categoryTitle.' description');
+                $manager->persist($difficulty);
+                $categories[] = $category;
+            }
+        //</editor-fold>
+
+        
 
         $manager->flush();
     }

@@ -39,7 +39,7 @@ class TagFamily
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'family', targetEntity: Tag::class)]
-    #[Groups(['TagFamily'])]
+    #[Groups(['TagFamily', 'TagFamilies'])]
     private Collection $tags;
 
     public function __construct()

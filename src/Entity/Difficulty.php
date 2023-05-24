@@ -3,35 +3,53 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\DifficultyRepository;
+use App\State\ActiveOnlyProvider;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DifficultyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(
+    provider: ActiveOnlyProvider::class),
+    GetCollection(normalizationContext: ['groups' => ['Difficulties']]),
+    Get(normalizationContext: ['groups' => ['Difficulty']]),
+    Post, Put, Delete, Patch
+]
 class Difficulty
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Difficulty', 'Difficulties'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['Difficulty', 'Difficulties'])]
     private ?string $label = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['Difficulty', 'Difficulties'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups(['Difficulty', 'Difficulties'])]
     private ?int $sortLevel = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Difficulty', 'Difficulties'])]
     private ?Color $color = null;
 
     #[ORM\OneToMany(mappedBy: 'difficulty', targetEntity: Challenge::class, orphanRemoval: true)]

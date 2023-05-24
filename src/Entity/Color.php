@@ -16,8 +16,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ColorRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(normalizationContext: ['groups' => ['Color']])]
-#[GetCollection(normalizationContext: ['groups' => ['Colors']]), Get, Post, Put, Delete, Patch]
+#[ApiResource(
+    normalizationContext: ['groups' => ['TagFamily', 'TagFamilies', 'Difficulty', 'Difficulties']]),
+    GetCollection(normalizationContext: ['groups' => ['Colors']]),
+    Get(normalizationContext: ['groups' => ['Color']]),
+    Post, Put, Delete, Patch
+]
 class Color
 {
     #[ORM\Id]
@@ -27,7 +31,7 @@ class Color
     private ?int $id = null;
 
     #[ORM\Column(length: 12)]
-    #[Groups( ['Color', 'Colors'] )]
+    #[Groups( ['Color', 'Colors', 'TagFamily', 'TagFamilies', 'Difficulty', 'Difficulties'] )]
     private ?string $code = null;
 
     public function getId(): ?int

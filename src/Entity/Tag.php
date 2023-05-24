@@ -19,9 +19,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    normalizationContext: ['groups' => ['TagFamily']],
-    provider: ActiveOnlyProvider::class
-),
+    normalizationContext: ['groups' => ['TagFamily', 'TagFamilies']],
+    provider: ActiveOnlyProvider::class),
     GetCollection(normalizationContext: ['groups' => ['Tags']]),
     Get(normalizationContext: ['groups' => ['Tag']]),
     Post, Put, Delete, Patch
@@ -31,16 +30,16 @@ class Tag
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['Tag', 'Tags', 'TagFamily'])]
+    #[Groups(['Tag', 'Tags', 'TagFamily', 'TagFamilies'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['Tag', 'Tags', 'TagFamily'])]
+    #[Groups(['Tag', 'Tags', 'TagFamily', 'TagFamilies'])]
     private ?string $label = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Tag', 'TagFamily'])]
+    #[Groups(['Tag', 'TagFamily', 'TagFamilies'])]
     private ?Color $color = null;
 
     #[ORM\ManyToOne(inversedBy: 'tags')]
