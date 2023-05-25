@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: DifficultyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -36,10 +37,12 @@ class Difficulty
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     #[Groups(['Difficulty', 'Difficulties'])]
     private ?string $label = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[NotBlank]
     #[Groups(['Difficulty', 'Difficulties'])]
     private ?string $description = null;
 

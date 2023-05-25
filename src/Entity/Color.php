@@ -13,6 +13,7 @@ use App\Repository\ColorRepository;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\CssColor;
 
 #[ORM\Entity(repositoryClass: ColorRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -31,6 +32,7 @@ class Color
     private ?int $id = null;
 
     #[ORM\Column(length: 12)]
+    #[CssColor]
     #[Groups( ['Color', 'Colors', 'TagFamily', 'TagFamilies', 'Difficulty', 'Difficulties'] )]
     private ?string $code = null;
 
