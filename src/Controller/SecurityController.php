@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\RefreshToken;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -22,14 +24,14 @@ class SecurityController extends AbstractController
 
     private JWTTokenManagerInterface $jwtManager;
 
-    //private RefreshTokenGeneratorInterface $refreshTokenGenerator;
+    private RefreshTokenGeneratorInterface $refreshTokenGenerator;
 
     public function __construct(
         JWTTokenManagerInterface $jwtManager,
-        //RefreshTokenGeneratorInterface $refreshTokenGenerator
+        RefreshTokenGeneratorInterface $refreshTokenGenerator
     ){
         $this->jwtManager = $jwtManager;
-        //$this->refreshTokenGenerator = $refreshTokenGenerator;
+        $this->refreshTokenGenerator = $refreshTokenGenerator;
     }
 
     //<editor-fold desc="Register">
@@ -39,7 +41,8 @@ class SecurityController extends AbstractController
         ValidatorInterface $validator,
         SerializerInterface $serializer,
         EntityManagerInterface $em,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        UserRepository $userRepository
     ): JsonResponse {
 
         $user = new User();
@@ -53,21 +56,31 @@ class SecurityController extends AbstractController
         $errors = $validator->validate($user);
 
         if (count($errors) > 0) {
-            $errorsString = (string) $errors;
-            return new JsonResponse($errorsString, Response::HTTP_BAD_REQUEST);
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
 
         $user->setPassword($passwordHasher->hashPassword($user, $user->getPassword()));
         $em->persist($user);
         $em->flush();
 
+        $user = $userRepository->findOneBy(['email' => $user->getEmail()]);
+
         $JWTtoken = $this->jwtManager->create($user);
-        //$refreshtoken = $this->refreshTokenGenerator->createForUserWithTtl($user, $this->getParameter('token.ttl'));
+        $refreshtoken = $this->refreshTokenGenerator->createForUserWithTtl($user, $this->getParameter('token.ttl'));
+
+        $refresh = new RefreshToken();
+        $refresh->setRefreshToken($refreshtoken);
+        $refresh->setValid($refreshtoken->getValid());
+        $refresh->setUsername($user->getId());
+
+        $em->persist($refresh);
+        $em->flush();
+
 
         return new JsonResponse([
             'token' => $JWTtoken,
-            //'refresh_token' => $refreshtoken->getRefreshToken(),
-            //'refresh_token_expiration' => $refreshtoken->getValid()->getTimestamp()
+            'refresh_token' => $refreshtoken->getRefreshToken(),
+            'refresh_token_expiration' => $refreshtoken->getValid()->getTimestamp()
         ], Response::HTTP_OK);
     }
     //</editor-fold>

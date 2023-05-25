@@ -2,6 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\User\MeController;
 use App\Repository\UserRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
@@ -11,11 +15,17 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\HasLifecycleCallbacks]
+#[ApiResource(
+    operations: [
+        new GetCollection(uriTemplate: '/me', controller: MeController::class, paginationEnabled: false, name: 'me')
+    ]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -25,32 +35,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(["User:Me"])]
+    #[Groups(["User"])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(["User:Me"])]
+    #[Groups(["User"])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[NotBlank, Email]
+    #[Groups(["User"])]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(["User"])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[NotBlank]
     private ?string $password = null;
-
-    #[ORM\Column]
-    #[Groups(["User:Me"])]
-    private ?bool $firstConnection = true;
 
     #[EqualTo(propertyPath: 'password', message: 'Passwords are not identical')]
     private ?string $confirm_password = null;
+
+    #[ORM\Column]
+    #[Groups(["User"])]
+    private ?bool $firstConnection = true;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Challenge::class, orphanRemoval: true)]
     private Collection $challenges;

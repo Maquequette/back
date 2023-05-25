@@ -5,7 +5,7 @@ controllers:
     type: attribute
 
 api_doc:
-    path: /$
+    path: /
     controller: api_platform.swagger_ui.action
 
 auth_refresh:
