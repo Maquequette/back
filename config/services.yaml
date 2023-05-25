@@ -27,3 +27,8 @@ services:
     App\State\ActiveOnlyProvider:
         bind:
             $itemProvider: '@api_platform.doctrine.orm.state.item_provider'
+
+    App\ApiResource\AuthOpenApiFactory:
+        decorates: 'api_platform.openapi.factory'
+        arguments: [ '@App\ApiResource\AuthOpenApiFactory.inner' ]
+        autoconfigure: false
