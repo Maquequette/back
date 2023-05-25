@@ -8,6 +8,7 @@ use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -20,9 +21,11 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $label = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[NotBlank]
     private ?string $description = null;
 
     public function getId(): ?int

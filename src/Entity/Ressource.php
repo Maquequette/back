@@ -7,6 +7,8 @@ use App\Repository\RessourceRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: RessourceRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -21,10 +23,16 @@ class Ressource
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $label = null;
 
+    // value of the resource (ex: file URL, ...)
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     private ?string $value = null;
 
+    // type of the resource (ex: file, image, video ...)
+    const TYPES = ['file', 'image'];
+
     #[ORM\Column(length: 255)]
+    #[Choice(Ressource::TYPES)]
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'ressources')]

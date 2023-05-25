@@ -15,6 +15,7 @@ use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -34,6 +35,7 @@ class Tag
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
     #[Groups(['Tag', 'Tags', 'TagFamily', 'TagFamilies'])]
     private ?string $label = null;
 
