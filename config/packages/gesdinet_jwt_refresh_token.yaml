@@ -1,0 +1,6 @@
+gesdinet_jwt_refresh_token:
+    refresh_token_class: App\Entity\RefreshToken
+    return_expiration: true
+    logout_firewall: api
+    single_use: true
+    ttl_update: true
