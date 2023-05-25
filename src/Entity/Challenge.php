@@ -54,11 +54,15 @@ class Challenge
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeLike::class, orphanRemoval: true)]
     private Collection $challengeLikes;
 
+    #[ORM\ManyToMany(targetEntity: Tag::class)]
+    private Collection $tags;
+
     public function __construct()
     {
         $this->ressources = new ArrayCollection();
         $this->solutions = new ArrayCollection();
         $this->challengeLikes = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,6 +130,18 @@ class Challenge
         return $this;
     }
 
+    public function isAllowed(): ?bool
+    {
+        return $this->allowed;
+    }
+
+    public function setAllowed(bool $allowed): self
+    {
+        $this->allowed = $allowed;
+
+        return $this;
+    }
+
     use Active;
     use Timestamp;
 
@@ -155,18 +171,6 @@ class Challenge
                 $ressource->setChallenge(null);
             }
         }
-
-        return $this;
-    }
-
-    public function isAllowed(): ?bool
-    {
-        return $this->allowed;
-    }
-
-    public function setAllowed(bool $allowed): self
-    {
-        $this->allowed = $allowed;
 
         return $this;
     }
@@ -227,6 +231,30 @@ class Challenge
                 $challengeLike->setChallenge(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        $this->tags->removeElement($tag);
 
         return $this;
     }

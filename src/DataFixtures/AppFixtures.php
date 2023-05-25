@@ -3,6 +3,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\Category;
+use App\Entity\Challenge;
+use App\Entity\ChallengeType;
 use App\Entity\Color;
 use App\Entity\Difficulty;
 use App\Entity\Tag;
@@ -10,6 +12,7 @@ use App\Entity\TagFamily;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -21,6 +24,8 @@ class AppFixtures extends Fixture
     }
 
     public function load(ObjectManager $manager): void {
+
+        $faker = Factory::create('fr_FR');
 
         //<editor-fold desc="User">
             // Creates "BASIC" user
@@ -46,7 +51,7 @@ class AppFixtures extends Fixture
             $colors = [];
             for ($i = 1; $i <= 5; $i++) {
                 $color = new Color();
-                $color->setCode('#'.$this->random_color_part().$this->random_color_part().$this->random_color_part());
+                $color->setCode($faker->hexColor);
                 $manager->persist($color);
                 $colors[] = $color;
             }
@@ -63,12 +68,14 @@ class AppFixtures extends Fixture
         //</editor-fold>
 
         //<editor-fold desc="Tag">
+            $tags = [];
             for ($i = 1; $i <= 10; $i++) {
                 $tag = new Tag();
                 $tag->setLabel('Tag '.$i);
                 $tag->setColor($colors[array_rand($colors)]);
                 $tag->setFamily($tagFamilies[array_rand($tagFamilies)]);
                 $manager->persist($tag);
+                $tags[] = $tag;
             }
         //</editor-fold>
 
@@ -97,12 +104,32 @@ class AppFixtures extends Fixture
             }
         //</editor-fold>
 
-        
+        //<editor-fold desc="ChallengeType">
+            $challengeTypes = [];
+            for ($i = 1; $i <= 5; $i++){
+                $challengeType = new ChallengeType();
+                $challengeType->setLabel('Type de challenge '.$i);
+                $challengeType->setDescription('Description');
+                $manager->persist($challengeType);
+                $challengeTypes[] = $challengeType;
+            }
+        //</editor-fold>
+
+        //<editor-fold desc="Challenge">
+            $challenges = [];
+            for ($i = 1; $i <= 15; $i++){
+                $challenge = new Challenge();
+                $challenge->setTitle($faker->realText(maxNbChars: 255));
+                $challenge->setDescription($faker->realText(maxNbChars: 2000));
+                $challenge->setDifficulty($difficulties[array_rand($difficulties)]);
+                $challenge->setType($challengeTypes[array_rand($challengeTypes)]);
+                $challenge->setAuthor($user);
+                $challenge->addTag($tags[array_rand($tags)]);
+                $manager->persist($challenge);
+                $challenges[] = $challenge;
+            }
+        //</editor-fold>
 
         $manager->flush();
-    }
-
-    private function random_color_part(): string {
-        return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
     }
 }
