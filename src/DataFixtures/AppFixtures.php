@@ -29,22 +29,26 @@ class AppFixtures extends Fixture
 
         //<editor-fold desc="User">
             // Creates "BASIC" user
-            $user = new User();
-            $user->setFirstName('user');
-            $user->setLastName('api');
-            $user->setEmail("user@api.com");
-            $user->setRoles(["ROLE_USER"]);
-            $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
-            $manager->persist($user);
+            $users = [];
+            for ($i = 0; $i < 5; $i++){
+                $user = new User();
+                $user->setFirstName($faker->firstName);
+                $user->setLastName($faker->lastName);
+                $user->setEmail($faker->email);
+                $user->setRoles(["ROLE_USER"]);
+                $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+                $manager->persist($user);
+                $users[] = $user;
+            }
 
             // Creates "ADMIN" user
-            $userAdmin = new User();
-            $userAdmin->setFirstName('admin');
-            $userAdmin->setLastName('api');
-            $userAdmin->setEmail("admin@api.com");
-            $userAdmin->setRoles(["ROLE_ADMIN"]);
-            $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
-            $manager->persist($userAdmin);
+            $admin = new User();
+            $admin->setFirstName('admin');
+            $admin->setLastName('api');
+            $admin->setEmail("admin@api.com");
+            $admin->setRoles(["ROLE_ADMIN"]);
+            $admin->setPassword($this->userPasswordHasher->hashPassword($admin, "password"));
+            $manager->persist($admin);
         //</editor-fold>
 
         //<editor-fold desc="Color">
@@ -99,7 +103,7 @@ class AppFixtures extends Fixture
                 $category = new Category();
                 $category->setLabel($categoryTitle);
                 $category->setDescription($categoryTitle.' description');
-                $manager->persist($difficulty);
+                $manager->persist($category);
                 $categories[] = $category;
             }
         //</editor-fold>
@@ -110,6 +114,7 @@ class AppFixtures extends Fixture
                 $challengeType = new ChallengeType();
                 $challengeType->setLabel('Type de challenge '.$i);
                 $challengeType->setDescription('Description');
+                $challengeType->setCategory($categories[array_rand($categories)]);
                 $manager->persist($challengeType);
                 $challengeTypes[] = $challengeType;
             }
@@ -123,7 +128,7 @@ class AppFixtures extends Fixture
                 $challenge->setDescription($faker->realText(maxNbChars: 2000));
                 $challenge->setDifficulty($difficulties[array_rand($difficulties)]);
                 $challenge->setType($challengeTypes[array_rand($challengeTypes)]);
-                $challenge->setAuthor($user);
+                $challenge->setAuthor($users[array_rand($users)]);
                 $challenge->addTag($tags[array_rand($tags)]);
                 $manager->persist($challenge);
                 $challenges[] = $challenge;
