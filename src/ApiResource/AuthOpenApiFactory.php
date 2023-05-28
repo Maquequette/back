@@ -173,7 +173,5 @@ class AuthOpenApiFactory implements OpenApiFactoryInterface
         ];
 
         return $jsonSchema;
-
-
     }
 }

@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(paginationClientItemsPerPage: true)]
 class Challenge
 {
     #[ORM\Id]
