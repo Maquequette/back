@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Controller\User\MeController;
 use App\Repository\UserRepository;
+use App\State\ActiveOnlyProvider;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -24,7 +25,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ApiResource(
     operations: [
         new GetCollection(uriTemplate: '/me', controller: MeController::class, paginationEnabled: false, name: 'me')
-    ]
+    ],
+    normalizationContext: ['groups' => ['Challenge', 'Challenges']],
+    provider: ActiveOnlyProvider::class
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -35,21 +38,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(["User"])]
+    #[Groups(['User', 'Challenge', 'Challenges'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(["User"])]
+    #[Groups(['User', 'Challenge', 'Challenges'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[NotBlank, Email]
-    #[Groups(["User"])]
+    #[Groups(['User'])]
     private ?string $email = null;
 
     #[ORM\Column]
-    #[Groups(["User"])]
+    #[Groups(['User'])]
     private array $roles = [];
 
     /**
@@ -63,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $confirm_password = null;
 
     #[ORM\Column]
-    #[Groups(["User"])]
+    #[Groups(['User'])]
     private ?bool $firstConnection = true;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Challenge::class, orphanRemoval: true)]

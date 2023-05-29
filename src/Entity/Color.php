@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\CssColor;
 #[ORM\Entity(repositoryClass: ColorRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    normalizationContext: ['groups' => ['TagFamily', 'TagFamilies', 'Difficulty', 'Difficulties']]),
+    normalizationContext: ['groups' => ['TagFamily', 'TagFamilies', 'Difficulty', 'Difficulties', 'Challenge', 'Challenges']]),
     GetCollection(normalizationContext: ['groups' => ['Colors']]),
     Get(normalizationContext: ['groups' => ['Color']]),
     Post, Put, Delete, Patch
@@ -33,7 +33,7 @@ class Color
 
     #[ORM\Column(length: 12)]
     #[CssColor]
-    #[Groups( ['Color', 'Colors', 'TagFamily', 'TagFamilies', 'Difficulty', 'Difficulties'] )]
+    #[Groups( ['Color', 'Colors', 'TagFamily', 'TagFamilies', 'Difficulty', 'Difficulties', 'Challenge', 'Challenges'] )]
     private ?string $code = null;
 
     public function getId(): ?int

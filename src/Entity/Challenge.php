@@ -3,58 +3,82 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ChallengeRepository;
+use App\State\ActiveOnlyProvider;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource(paginationClientItemsPerPage: true)]
+#[ApiResource(
+    paginationClientItemsPerPage: true,
+    provider: ActiveOnlyProvider::class),
+    GetCollection(normalizationContext: ['groups' => ['Challenges', 'Difficulty']]),
+    Get(normalizationContext: ['groups' => ['Challenge']]),
+    Post, Put, Delete, Patch
+]
 class Challenge
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?User $author = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?Difficulty $difficulty = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?ChallengeType $type = null;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Ressource::class)]
+    #[Groups(['Challenge'])]
     private Collection $ressources;
 
     #[ORM\Column]
     private ?bool $allowed = true;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Solution::class, orphanRemoval: true)]
+    #[Groups(['Challenge'])]
     private Collection $solutions;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeLike::class, orphanRemoval: true)]
+    #[Groups(['Challenge', 'Challenges'])]
     private Collection $challengeLikes;
 
     #[ORM\ManyToMany(targetEntity: Tag::class)]
+    #[Groups(['Challenge', 'Challenges'])]
     private Collection $tags;
 
     public function __construct()

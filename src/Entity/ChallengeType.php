@@ -10,11 +10,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ChallengeTypeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['Challenge', 'Challenges']],
+)]
 class ChallengeType
 {
     #[ORM\Id]
@@ -24,10 +27,12 @@ class ChallengeType
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?string $label = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?string $description = null;
 
     #[ORM\ManyToOne]

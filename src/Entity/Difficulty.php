@@ -23,6 +23,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\Entity(repositoryClass: DifficultyRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
+    normalizationContext: ['groups' => ['Challenge', 'Challenges']],
     provider: ActiveOnlyProvider::class),
     GetCollection(normalizationContext: ['groups' => ['Difficulties']]),
     Get(normalizationContext: ['groups' => ['Difficulty']]),
@@ -38,21 +39,21 @@ class Difficulty
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(['Difficulty', 'Difficulties'])]
+    #[Groups(['Difficulty', 'Difficulties', 'Challenge', 'Challenges'])]
     private ?string $label = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
-    #[Groups(['Difficulty', 'Difficulties'])]
+    #[Groups(['Difficulty', 'Difficulties', 'Challenge', 'Challenges'])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    #[Groups(['Difficulty', 'Difficulties'])]
+    #[Groups(['Difficulty', 'Difficulties', 'Challenge', 'Challenges'])]
     private ?int $sortLevel = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Difficulty', 'Difficulties'])]
+    #[Groups(['Difficulty', 'Difficulties', 'Challenge', 'Challenges'])]
     private ?Color $color = null;
 
     #[ORM\OneToMany(mappedBy: 'difficulty', targetEntity: Challenge::class, orphanRemoval: true)]
