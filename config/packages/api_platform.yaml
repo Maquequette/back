@@ -4,11 +4,20 @@ api_platform:
     description: 'ou moncucul ?'
     version: '1.0.0'
 
-    swagger:
-         swagger_ui_extra_configuration:
-           docExpansion: none
+    defaults:
+        pagination_client_items_per_page: true
+        pagination_items_per_page: 15
+        pagination_maximum_items_per_page: 30
 
-         api_keys:
-             JWT:
+    collection:
+        pagination:
+            items_per_page_parameter_name: itemsPerPage
+
+    swagger:
+        swagger_ui_extra_configuration:
+            docExpansion: none
+
+        api_keys:
+            JWT:
                 name: Authorization
                 type: header

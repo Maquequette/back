@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use App\Controller\User\MeController;
 use App\Repository\UserRepository;
@@ -27,7 +26,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
         new GetCollection(uriTemplate: '/me', controller: MeController::class, paginationEnabled: false, name: 'me')
     ],
     normalizationContext: ['groups' => ['Challenge', 'Challenges']],
-    provider: ActiveOnlyProvider::class
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

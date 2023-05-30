@@ -20,8 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\Entity(repositoryClass: TagRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    normalizationContext: ['groups' => ['TagFamily', 'TagFamilies', 'Challenge', 'Challenges']],
-    provider: ActiveOnlyProvider::class),
+    normalizationContext: ['groups' => ['TagFamily', 'TagFamilies', 'Challenge', 'Challenges']]),
     GetCollection(normalizationContext: ['groups' => ['Tags']]),
     Get(normalizationContext: ['groups' => ['Tag']]),
     Post, Put, Delete, Patch

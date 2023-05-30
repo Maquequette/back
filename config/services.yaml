@@ -24,11 +24,16 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\State\ActiveOnlyProvider:
-        bind:
-            $itemProvider: '@api_platform.doctrine.orm.state.item_provider'
+    App\ApiResource\ActiveOnlyExtension:
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
 
     App\ApiResource\AuthOpenApiFactory:
         decorates: 'api_platform.openapi.factory'
         arguments: [ '@App\ApiResource\AuthOpenApiFactory.inner' ]
         autoconfigure: false
+
+    'App\ApiResource\TimestampNormalizer':
+        decorates: 'api_platform.jsonld.normalizer.item'
+        arguments:
+            $decorated: '@App\ApiResource\TimestampNormalizer.inner'
