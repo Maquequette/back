@@ -26,13 +26,24 @@ composer install
 ```
 ### Replace all .env variables
 
+### Generate JWT keys
+
+```sh
+php bin/console lexik:jwt:generate-keypair
+```
+
+OU dans votre gitBash
+
+```sh
+openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem-pubout
+```
+
 ### Create Database with data fixtures
 
 ```sh
 php bin/console d:d:c
-
 php bin/console d:m:m
-
 php bin/console d:f:l
 ```
 

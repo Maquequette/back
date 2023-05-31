@@ -32,7 +32,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 ]
 #[ApiFilter(OrderFilter::class, properties: ['createdAt', 'difficulty.sortLevel'], arguments: ['orderParameterName' => 'order'])]
 #[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
-#[ApiFilter(NumericFilter::class, properties: ['type.category.id'])]
+#[ApiFilter(NumericFilter::class, properties: ['type.category.id', 'difficulty.id', 'tags.id'])]
 class Challenge
 {
     #[ORM\Id]
