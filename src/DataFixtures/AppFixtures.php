@@ -61,11 +61,24 @@ class AppFixtures extends Fixture
             }
         //</editor-fold>
 
+        //<editor-fold desc="Category">
+        $categories = [];
+        $categoriesTitle = ['Web Front', 'Web Design', 'UX Design', 'Mobile'];
+        foreach ($categoriesTitle as $categoryTitle){
+            $category = new Category();
+            $category->setLabel($categoryTitle);
+            $category->setDescription($categoryTitle.' description');
+            $manager->persist($category);
+            $categories[] = $category;
+        }
+        //</editor-fold>
+
         //<editor-fold desc="TagFamily">
             $tagFamilies = [];
             for ($i = 1; $i <= 5; $i++) {
                 $tagFamily = new TagFamily();
                 $tagFamily->setLabel('TagFamily '.$i);
+                $tagFamily->setCategory($categories[array_rand($categories)]);
                 $manager->persist($tagFamily);
                 $tagFamilies[] = $tagFamily;
             }
@@ -93,18 +106,6 @@ class AppFixtures extends Fixture
                 $difficulty->setColor($colors[array_rand($colors)]);
                 $manager->persist($difficulty);
                 $difficulties[] = $difficulty;
-            }
-        //</editor-fold>
-
-        //<editor-fold desc="Category">
-            $categories = [];
-            $categoriesTitle = ['Web Front', 'Web Design', 'UX Design', 'Mobile'];
-            foreach ($categoriesTitle as $categoryTitle){
-                $category = new Category();
-                $category->setLabel($categoryTitle);
-                $category->setDescription($categoryTitle.' description');
-                $manager->persist($category);
-                $categories[] = $category;
             }
         //</editor-fold>
 

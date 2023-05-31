@@ -12,6 +12,8 @@ use ApiPlatform\Metadata\Put;
 use App\Repository\CategoryRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -37,6 +39,14 @@ class Category
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
     private ?string $description = null;
+
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: TagFamily::class)]
+    private Collection $tagFamilies;
+
+    public function __construct()
+    {
+        $this->tagFamilies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -69,4 +79,34 @@ class Category
 
     use Active;
     use Timestamp;
+
+    /**
+     * @return Collection<int, TagFamily>
+     */
+    public function getTagFamilies(): Collection
+    {
+        return $this->tagFamilies;
+    }
+
+    public function addTagFamily(TagFamily $tagFamily): self
+    {
+        if (!$this->tagFamilies->contains($tagFamily)) {
+            $this->tagFamilies->add($tagFamily);
+            $tagFamily->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTagFamily(TagFamily $tagFamily): self
+    {
+        if ($this->tagFamilies->removeElement($tagFamily)) {
+            // set the owning side to null (unless already changed)
+            if ($tagFamily->getCategory() === $this) {
+                $tagFamily->setCategory(null);
+            }
+        }
+
+        return $this;
+    }
 }

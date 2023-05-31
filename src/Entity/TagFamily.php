@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -10,7 +12,6 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\TagFamilyRepository;
-use App\State\ActiveOnlyProvider;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,6 +27,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
     GetCollection(normalizationContext: ['groups' => ['TagFamilies']]),
     Get, Post, Put, Delete, Patch
 ]
+#[ApiFilter(NumericFilter::class, properties: ['category.id'])]
 class TagFamily
 {
     #[ORM\Id]
@@ -42,6 +44,9 @@ class TagFamily
     #[ORM\OneToMany(mappedBy: 'family', targetEntity: Tag::class)]
     #[Groups(['TagFamily', 'TagFamilies'])]
     private Collection $tags;
+
+    #[ORM\ManyToOne(inversedBy: 'tagFamilies')]
+    private ?Category $category = null;
 
     public function __construct()
     {
@@ -94,6 +99,18 @@ class TagFamily
                 $tag->setFamily(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
