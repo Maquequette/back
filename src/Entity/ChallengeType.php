@@ -23,6 +23,7 @@ class ChallengeType
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['Challenge', 'Challenges'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
