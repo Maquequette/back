@@ -7,7 +7,7 @@ parameters:
     token.ttl: '%env(REFRESH_TTL)%'
 
 services:
-    # default configuration for services in *this* file
+
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
@@ -37,3 +37,10 @@ services:
         decorates: 'api_platform.jsonld.normalizer.item'
         arguments:
             $decorated: '@App\ApiResource\TimestampNormalizer.inner'
+
+    App\Service\AwsS3Service:
+        arguments:
+            $AWS_ACCESS_KEY_ID: '%env(AWS_ACCESS_KEY_ID)%' # Clé d'accès AWS S3 
+            $AWS_SECRET_ACCESS_KEY: '%env(AWS_SECRET_ACCESS_KEY)%' # Secret d'accès AWS S3 
+            $AWS_DEFAULT_REGION: '%env(AWS_DEFAULT_REGION)%' # Région AWS S3 
+            $AWS_BUCKET: '%env(AWS_BUCKET)%' # Nom du bucket AWS S3
