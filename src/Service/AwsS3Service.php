@@ -30,7 +30,7 @@ class AwsS3Service
         }
 
 
-    public function uploadFile(string $key, string $sourceFilePath): bool
+    public function uploadFile(string $key,  $sourceFilePath): bool
     {
         //dd([$this->AWS_ACCESS_KEY_ID, $this->AWS_SECRET_ACCESS_KEY]);
         $result = $this->s3Client->putObject([

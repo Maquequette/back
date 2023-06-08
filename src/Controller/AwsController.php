@@ -20,17 +20,14 @@ class AwsController extends AbstractController
      */
     public function uploadFile(Request $request)
     {
-        $file = $request->files->get('file');
+       $file = $request->files->get('file');
         // Vérifiez si un fichier a été envoyé
         if (!$file) {
             return new Response('Aucun fichier n\'a été envoyé.', Response::HTTP_BAD_REQUEST);
         }
         
-        //$key = './'.$file->getClientOriginalName();
-        
-        $sourceFilePath = $file->getPath();
-
-        $uploadSuccessful =  $this->awsS3Service->uploadFile('/fichierpostman',$sourceFilePath);
+        $key = './'.$file->getClientOriginalName();
+        $uploadSuccessful =  $this->awsS3Service->uploadFile($key,$file);
        
         if ($uploadSuccessful) {
             return new Response('Le fichier à bien été uploader.', Response::HTTP_CREATED);
