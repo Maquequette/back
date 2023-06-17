@@ -39,7 +39,6 @@ class AwsS3Service
             'SourceFile' => $sourceFilePath,
             
         ]);
-
         return $result['@metadata']['statusCode'] === 200;
     }
 
