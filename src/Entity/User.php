@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use App\Controller\User\MeController;
 use App\Repository\UserRepository;
-use App\State\ActiveOnlyProvider;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;

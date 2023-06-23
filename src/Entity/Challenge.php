@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
@@ -13,6 +13,8 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\Challenge\CreateChallengeController;
+use App\Filter\MultiSearch;
 use App\Repository\ChallengeRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
@@ -20,18 +22,47 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\OpenApi\Model;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource,
+#[ApiResource(
+    /*operations: [
+        new Post(
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            controller: CreateChallengeController::class,
+            openapi: new Model\Operation(
+                requestBody: new Model\RequestBody(
+                    content: new \ArrayObject([
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'title' => ['type' => 'string'],
+                                    'description' => ['type' => 'string'],
+                                    'difficulty' => ['type' => 'string'],
+                                    'type' => ['type' => 'string'],
+                                    'ressources' => ['type' => 'array'],
+                                    'tags' => ['type' => 'array']
+                                ]
+                            ]
+                        ]
+                    ])
+                )
+            ),
+            denormalizationContext: ['groups' => ['Challenge:POST']],
+            deserialize: false
+        )
+    ],*/
+),
     GetCollection(normalizationContext: ['groups' => ['Challenges', 'Difficulty']]),
     Get(normalizationContext: ['groups' => ['Challenge']]),
-    Post, Put, Delete, Patch
+    Put, Delete, Patch
 ]
 #[ApiFilter(OrderFilter::class, properties: ['createdAt', 'difficulty.sortLevel'], arguments: ['orderParameterName' => 'order'])]
-#[ApiFilter(SearchFilter::class, properties: ['title' => 'partial', 'description' => 'partial'])]
+#[ApiFilter(MultiSearch::class, properties: ['title', 'description'])]
 #[ApiFilter(NumericFilter::class, properties: ['type.category.id', 'difficulty.id', 'tags.id'])]
 class Challenge
 {
@@ -48,26 +79,27 @@ class Challenge
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
+    #[ApiProperty(writableLink: false)]
     private ?Difficulty $difficulty = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
     private ?ChallengeType $type = null;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Ressource::class)]
-    #[Groups(['Challenge'])]
+    #[Groups(['Challenge', 'Challenge:POST'])]
     private Collection $ressources;
 
     #[ORM\Column]
@@ -82,7 +114,7 @@ class Challenge
     private Collection $challengeLikes;
 
     #[ORM\ManyToMany(targetEntity: Tag::class)]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
     private Collection $tags;
 
     public function __construct()
