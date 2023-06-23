@@ -15,6 +15,7 @@ class AwsController extends AbstractController
     {
         $this->awsS3Service = $awsS3Service;
     }
+
      /**
      * @Route("/upload", name="upload_file", methods={"POST"})
      */
@@ -27,7 +28,8 @@ class AwsController extends AbstractController
         }
         
         $key = './'.$file->getClientOriginalName();
-        $uploadSuccessful =  $this->awsS3Service->uploadFile($key,$file);
+
+        $uploadSuccessful =  $this->awsS3Service->uploadFile($key, $file);
        
         if ($uploadSuccessful) {
             return new Response('Le fichier à bien été uploader.', Response::HTTP_CREATED);
@@ -36,5 +38,4 @@ class AwsController extends AbstractController
 
         }
     }
-
 }
