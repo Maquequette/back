@@ -23,7 +23,6 @@ class ActiveOnlyExtension implements QueryCollectionExtensionInterface, QueryIte
 
     private function addWhere(QueryBuilder $queryBuilder, array $context = [])
     {
-
         // Search if a "active" Filter is being requested, if not, apply a restriction to the QueryBuilder
         if (array_key_exists('filters', $context) && array_key_exists('active', $context['filters'])) {
             return;

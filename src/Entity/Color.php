@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\ColorRepository;
+use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -53,5 +54,6 @@ class Color
         return $this;
     }
 
+    use Active;
     use Timestamp;
 }
