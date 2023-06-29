@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    /*operations: [
+    operations: [
         new Post(
             inputFormats: ['multipart' => ['multipart/form-data']],
             controller: CreateChallengeController::class,
@@ -42,8 +42,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
                                 'properties' => [
                                     'title' => ['type' => 'string'],
                                     'description' => ['type' => 'string'],
-                                    'difficulty' => ['type' => 'string'],
-                                    'type' => ['type' => 'string'],
+                                    'difficulty' => ['type' => 'int'],
+                                    'type' => ['type' => 'int'],
                                     'ressources' => ['type' => 'array'],
                                     'tags' => ['type' => 'array']
                                 ]
@@ -55,7 +55,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
             denormalizationContext: ['groups' => ['Challenge:POST']],
             deserialize: false
         )
-    ],*/
+    ],
 ),
     GetCollection(normalizationContext: ['groups' => ['Challenges', 'Difficulty']]),
     Get(normalizationContext: ['groups' => ['Challenge']]),
