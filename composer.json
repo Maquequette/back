@@ -8,6 +8,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "api-platform/core": "^3.1",
+        "artprima/prometheus-metrics-bundle": "^1.17",
         "aws/aws-sdk-php": "^3.271",
         "doctrine/annotations": "^2.0",
         "doctrine/doctrine-bundle": "^2.9",

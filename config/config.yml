@@ -1,18 +1,22 @@
 # app/config/config.yml
 
-liip_imagine:
-    cache: aws_s3_resolver
-    resolvers:
-        aws_s3_resolver:
-            aws_s3:
-                client_config:
-                    credentials:
-                        key:    "%amazon.s3.key%"
-                        secret: "%amazon.s3.secret%"
-                    region: "%amazon.s3.region%"
-                    version: "%amazon.s3.version%"
-                bucket: "%amazon.s3.bucket%"
-                get_options:
-                    Scheme: https
-                put_options:
-                    CacheControl: "max-age=86400"
+artprima_prometheus_metrics:
+    # namespace is used to prefix the prometheus metrics
+    namespace: maquequette
+
+    # metrics backend
+    storage:
+        # Known values: in_memory, apcu, apcng, redis
+        type: in_memory
+        # Available parameters used by redis
+        host: 127.0.0.1
+        port: 6379
+        timeout: 0.1
+        read_timeout: 10
+        persistent_connections: false
+    # used to disable default application metrics
+    disable_default_metrics: false
+    # used to disable default metrics from promphp/prometheus_client_php
+    disable_default_promphp_metrics: false
+    # used to enable console metrics
+    enable_console_metrics: false
