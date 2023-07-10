@@ -3,28 +3,16 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Post;
 use App\Repository\RessourceRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use  App\Controller\Ressource\CreateRessourceController;
 
  #[ORM\Entity(repositoryClass: RessourceRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource (
-    operations: [
-        new Post(        
-        name: 'Ressource', 
-        uriTemplate: '/ressource', 
-        controller: CreateRessourceController::class,
-        paginationEnabled: false,
-        deserialize:false)
-    ]
-)]
-
+#[ApiResource]
 class Ressource
 {
     #[ORM\Id]

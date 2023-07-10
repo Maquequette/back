@@ -13,9 +13,12 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Controller\Challenge\ChallengeDislikeController;
+use App\Controller\Challenge\ChallengeLikeController;
 use App\Controller\Challenge\CreateChallengeController;
 use App\Filter\MultiSearch;
 use App\Repository\ChallengeRepository;
+use App\State\ChallengeIsLikedProvider;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -54,8 +57,23 @@ use Symfony\Component\Validator\Constraints\NotBlank;
             ),
             denormalizationContext: ['groups' => ['Challenge:POST']],
             deserialize: false
+        ),
+        new Post(
+            uriTemplate: '/challenges/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: ChallengeLikeController::class,
+            deserialize: false,
+            name: 'ChallengeLike'
+        ),
+        new Delete(
+            uriTemplate: '/challenges/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: ChallengeDislikeController::class,
+            deserialize: false,
+            name: 'ChallengeDislike'
         )
     ],
+    provider: ChallengeIsLikedProvider::class,
 ),
     GetCollection(normalizationContext: ['groups' => ['Challenges', 'Difficulty']]),
     Get(normalizationContext: ['groups' => ['Challenge']]),
@@ -110,8 +128,13 @@ class Challenge
     private Collection $solutions;
 
     #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeLike::class, orphanRemoval: true)]
-    #[Groups(['Challenge', 'Challenges'])]
     private Collection $challengeLikes;
+
+    #[Groups(['Challenge', 'Challenges'])]
+    private int $challengeLikesCount;
+
+    #[Groups(['Challenge', 'Challenges'])]
+    private bool $isLiked = false;
 
     #[ORM\ManyToMany(targetEntity: Tag::class)]
     #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
@@ -292,6 +315,22 @@ class Challenge
             }
         }
 
+        return $this;
+    }
+
+    public function getChallengeLikesCount(): int
+    {
+        return $this->getChallengeLikes()->count();
+    }
+
+    public function getIsLiked(): bool
+    {
+        return $this->isLiked;
+    }
+
+    public function setIsLiked(bool $isLiked): self
+    {
+        $this->isLiked = $isLiked;
         return $this;
     }
 
