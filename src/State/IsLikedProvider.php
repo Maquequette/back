@@ -6,11 +6,10 @@ use ApiPlatform\Doctrine\Orm\State\CollectionProvider;
 use ApiPlatform\Metadata\CollectionOperationInterface;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
-use App\Entity\Challenge;
-use App\Entity\ChallengeLike;
+use App\Entity\Like;
 use Symfony\Bundle\SecurityBundle\Security;
 
-class ChallengeIsLikedProvider implements ProviderInterface
+class IsLikedProvider implements ProviderInterface
 {
 
     public function __construct(
@@ -38,20 +37,20 @@ class ChallengeIsLikedProvider implements ProviderInterface
 
         if ($operation instanceof CollectionOperationInterface) {
 
-            foreach ($data as $challenge){
-                $challenge->getChallengeLikes()->filter(
-                    function(ChallengeLike $challengeLike) use($challenge, $user) {
-                        if($challengeLike->getUser()->getId() === $user->getId()){
-                            $challenge->setIsLiked(true);
+            foreach ($data as $target){
+                $target->getLikes()->filter(
+                    function(Like $like) use($target, $user) {
+                        if($like->getUser()->getId() === $user->getId()){
+                            $target->setIsLiked(true);
                         }
                     }
                 );
             }
 
         } else {
-            $data->getChallengeLikes()->filter(
-                function(ChallengeLike $challengeLike) use($data, $user) {
-                    if($challengeLike->getUser()->getId() === $user->getId()){
+            $data->getLikes()->filter(
+                function(Like $like) use($data, $user) {
+                    if($like->getUser()->getId() === $user->getId()){
                         $data->setIsLiked(true);
                     }
                 }

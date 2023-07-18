@@ -38,7 +38,7 @@ services:
         arguments:
             $decorated: '@App\ApiResource\TimestampNormalizer.inner'
 
-    App\State\ChallengeIsLikedProvider:
+    App\State\IsLikedProvider:
         bind:
             $itemProvider: '@api_platform.doctrine.orm.state.item_provider'
             $collectionProvider: '@api_platform.doctrine.orm.state.collection_provider'

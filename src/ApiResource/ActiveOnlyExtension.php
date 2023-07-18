@@ -11,19 +11,25 @@ use Doctrine\ORM\QueryBuilder;
 class ActiveOnlyExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
 
+    private array $notFiltered = ["App\Entity\CommentInterface"];
+
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
     {
-        $this->addWhere($queryBuilder, $context);
+        $this->addWhere($queryBuilder, $resourceClass, $context);
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, Operation $operation = null, array $context = []): void
     {
-        $this->addWhere($queryBuilder, $context);
+        $this->addWhere($queryBuilder, $resourceClass, $context);
     }
 
-    private function addWhere(QueryBuilder $queryBuilder, array $context = [])
+    private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, array $context = [])
     {
-        // Search if a "active" Filter is being requested, if not, apply a restriction to the QueryBuilder
+        if (in_array($resourceClass, $this->notFiltered, true)) {
+            return;
+        }
+
+        // Search if an "active" Filter is being requested, if not, apply a restriction to the QueryBuilder
         if (array_key_exists('filters', $context) && array_key_exists('active', $context['filters'])) {
             return;
         }

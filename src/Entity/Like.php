@@ -2,24 +2,25 @@
 
 namespace App\Entity;
 
-use App\Repository\ChallengeLikeRepository;
+use App\Repository\LikeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ChallengeLikeRepository::class)]
-class ChallengeLike
+#[ORM\Entity(repositoryClass: LikeRepository::class)]
+#[ORM\Table(name: '`like`')]
+class Like
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'challengeLikes')]
+    #[ORM\ManyToOne(inversedBy: 'likes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'challengeLikes')]
+    #[ORM\ManyToOne(inversedBy: 'likes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Challenge $challenge = null;
+    private ?PolymorphicEntity $target = null;
 
     public function getId(): ?int
     {
@@ -38,14 +39,14 @@ class ChallengeLike
         return $this;
     }
 
-    public function getChallenge(): ?Challenge
+    public function getTarget(): ?PolymorphicEntity
     {
-        return $this->challenge;
+        return $this->target;
     }
 
-    public function setChallenge(?Challenge $challenge): self
+    public function setTarget(?PolymorphicEntity $target): self
     {
-        $this->challenge = $challenge;
+        $this->target = $target;
 
         return $this;
     }
