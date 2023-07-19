@@ -3,9 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Controller\Comment\CreateCommentController;
 use App\Repository\CommentRepository;
 use App\Trait\Active;
-use App\Trait\Comments;
 use App\Trait\Likes;
 use App\Trait\Timestamp;
 use Doctrine\DBAL\Types\Types;
@@ -16,19 +20,33 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
-    normalizationContext: ['groups' => ['Comment']]
-)]
+    operations: [
+        new Post(
+            controller: CreateCommentController::class,
+        )
+    ]
+),
+    GetCollection(normalizationContext: ['groups' => ['Comments']]),
+    Get(normalizationContext: ['groups' => ['Comment']]),
+    Delete
+]
 class Comment extends PolymorphicEntity
 {
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Comment', 'Challenge', 'Challenges'])]
+    #[Groups([
+        'Comment', 'Comments',
+        'Challenge', 'Challenges'
+    ])]
     private ?User $author = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
-    #[Groups(['Comment', 'Challenge', 'Challenges'])]
+    #[Groups([
+        'Comment',
+        'Challenge', 'Challenges'
+    ])]
     private ?string $content = null;
 
     #[ORM\ManyToOne(targetEntity: PolymorphicEntity::class, inversedBy: 'comments')]
