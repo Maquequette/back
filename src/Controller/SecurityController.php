@@ -22,17 +22,10 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class SecurityController extends AbstractController
 {
 
-    private JWTTokenManagerInterface $jwtManager;
-
-    private RefreshTokenGeneratorInterface $refreshTokenGenerator;
-
     public function __construct(
-        JWTTokenManagerInterface $jwtManager,
-        RefreshTokenGeneratorInterface $refreshTokenGenerator
-    ){
-        $this->jwtManager = $jwtManager;
-        $this->refreshTokenGenerator = $refreshTokenGenerator;
-    }
+        private readonly JWTTokenManagerInterface $jwtManager,
+        private readonly RefreshTokenGeneratorInterface $refreshTokenGenerator
+    ){ }
 
     //<editor-fold desc="Register">
     #[Route(path: '/register', name: 'auth_register', methods: ['POST'])]

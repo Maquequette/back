@@ -20,7 +20,9 @@ use App\Filter\MultiSearch;
 use App\Repository\ChallengeRepository;
 use App\State\IsLikedProvider;
 use App\Trait\Active;
+use App\Trait\Comments;
 use App\Trait\Likes;
+use App\Trait\Resources;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -112,10 +114,6 @@ class Challenge extends PolymorphicEntity
     #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
     private ?ChallengeType $type = null;
 
-    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Ressource::class)]
-    #[Groups(['Challenge', 'Challenge:POST'])]
-    private Collection $ressources;
-
     #[ORM\Column]
     private ?bool $allowed = true;
 
@@ -131,10 +129,15 @@ class Challenge extends PolymorphicEntity
         Likes::__construct as private __LikesConstruct;
     }
 
+    use Resources {
+        Resources::__construct as private __ResourcesConstruct;
+    }
+
     public function __construct()
     {
+        parent::__construct();
         $this->__LikesConstruct();
-        $this->ressources = new ArrayCollection();
+        $this->__ResourcesConstruct();
         $this->solutions = new ArrayCollection();
         $this->tags = new ArrayCollection();
     }
@@ -213,36 +216,6 @@ class Challenge extends PolymorphicEntity
 
     use Active;
     use Timestamp;
-
-    /**
-     * @return Collection<int, Ressource>
-     */
-    public function getRessources(): Collection
-    {
-        return $this->ressources;
-    }
-
-    public function addRessource(Ressource $ressource): self
-    {
-        if (!$this->ressources->contains($ressource)) {
-            $this->ressources->add($ressource);
-            $ressource->setChallenge($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRessource(Ressource $ressource): self
-    {
-        if ($this->ressources->removeElement($ressource)) {
-            // set the owning side to null (unless already changed)
-            if ($ressource->getChallenge() === $this) {
-                $ressource->setChallenge(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Solution>

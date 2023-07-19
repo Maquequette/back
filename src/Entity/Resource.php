@@ -3,18 +3,21 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\RessourceRepository;
+use App\Repository\ResourceRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
- #[ORM\Entity(repositoryClass: RessourceRepository::class)]
+ #[ORM\Entity(repositoryClass: ResourceRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource]
-class Ressource
+class Resource
 {
+    //type of the resource (ex: file, image, video ...)
+    const TYPES = ['file', 'image'];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -28,18 +31,13 @@ class Ressource
     #[NotBlank]
     private ?string $value = null;
 
-    // type of the resource (ex: file, image, video ...)
-    const TYPES = ['file', 'image'];
-
     #[ORM\Column(length: 255)]
-    #[Choice(Ressource::TYPES)]
+    #[Choice(Resource::TYPES)]
     private ?string $type = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ressources')]
-    private ?Challenge $challenge = null;
-
-    #[ORM\ManyToOne(inversedBy: 'ressources')]
-    private ?Solution $solution = null;
+    #[ORM\ManyToOne(inversedBy: 'resources')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?PolymorphicEntity $target = null;
 
     public function getId(): ?int
     {
@@ -82,26 +80,14 @@ class Ressource
         return $this;
     }
 
-    public function getChallenge(): ?Challenge
+    public function getTarget(): ?PolymorphicEntity
     {
-        return $this->challenge;
+        return $this->target;
     }
 
-    public function setChallenge(?Challenge $challenge): self
+    public function setTarget(?PolymorphicEntity $target): self
     {
-        $this->challenge = $challenge;
-
-        return $this;
-    }
-
-    public function getSolution(): ?Solution
-    {
-        return $this->solution;
-    }
-
-    public function setSolution(?Solution $solution): self
-    {
-        $this->solution = $solution;
+        $this->target = $target;
 
         return $this;
     }

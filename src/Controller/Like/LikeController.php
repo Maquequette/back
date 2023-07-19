@@ -6,21 +6,19 @@ use App\Entity\Like;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class LikeController extends AbstractController
 {
 
-    public static function like(
-        int $id,
-        ServiceEntityRepository $repository,
-        Security $security,
-        EntityManagerInterface $em
-    ): JsonResponse
+    public function __construct(
+        private readonly EntityManagerInterface $em
+    ){ }
+
+    public function like(int $id, ServiceEntityRepository $repository): JsonResponse
     {
-        $user = $security->getUser();
+        $user = $this->getUser();
         $target = $repository->find($id);
 
         $likes = $target->getLikes()->filter(
@@ -37,12 +35,12 @@ class LikeController extends AbstractController
             $like = new Like();
             $like->setUser($user);
             $like->setTarget($target);
-            $em->persist($like);
+            $this->em->persist($like);
 
             $target->addLike($like);
-            $em->persist($target);
+            $this->em->persist($target);
 
-            $em->flush();
+            $this->em->flush();
 
             return new JsonResponse('', Response::HTTP_OK, [], true);
 
@@ -51,14 +49,9 @@ class LikeController extends AbstractController
         }
     }
 
-    public static function dislike(
-        int $id,
-        ServiceEntityRepository $repository,
-        Security $security,
-        EntityManagerInterface $em
-    ): JsonResponse
+    public function dislike(int $id, ServiceEntityRepository $repository): JsonResponse
     {
-        $user = $security->getUser();
+        $user = $this->getUser();
         $target = $repository->find($id);
 
         $likes = $target->getLikes()->filter(
@@ -73,8 +66,8 @@ class LikeController extends AbstractController
 
         try {
             $target->removeLike($likes->first());
-            $em->persist($target);
-            $em->flush();
+            $this->em->persist($target);
+            $this->em->flush();
 
             return new JsonResponse('', Response::HTTP_OK, [], true);
 

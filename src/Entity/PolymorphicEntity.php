@@ -4,13 +4,13 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PolymorphicEntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Trait\Comments;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PolymorphicEntityRepository::class)]
 #[ORM\InheritanceType("JOINED")]
-#[ORM\DiscriminatorColumn(name: "type", type: "smallint", length: 8)]
+#[ORM\Table(options: ['comment' => '1 => Challenge | 2 => Solution | 3 => Comment'])]
+#[ORM\DiscriminatorColumn(name: "type", type: "smallint")]
 #[ORM\DiscriminatorMap([
     1 => Challenge::class,
     2 => Solution::class,
@@ -27,5 +27,14 @@ abstract class PolymorphicEntity
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    use Comments {
+        Comments::__construct as private __CommentsConstruct;
+    }
+
+    public function __construct()
+    {
+        $this->__CommentsConstruct();
     }
 }

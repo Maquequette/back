@@ -72,22 +72,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Solution::class, orphanRemoval: true)]
     private Collection $solutions;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CommentLike::class, orphanRemoval: true)]
-    private Collection $commentLikes;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: SolutionLike::class, orphanRemoval: true)]
-    private Collection $solutionLikes;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Like::class, orphanRemoval: true)]
     private Collection $likes;
+
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
+    private Collection $comments;
 
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
         $this->solutions = new ArrayCollection();
-        $this->commentLikes = new ArrayCollection();
-        $this->solutionLikes = new ArrayCollection();
         $this->likes = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -271,66 +267,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, CommentLike>
-     */
-    public function getCommentLikes(): Collection
-    {
-        return $this->commentLikes;
-    }
-
-    public function addCommentLike(CommentLike $commentLike): self
-    {
-        if (!$this->commentLikes->contains($commentLike)) {
-            $this->commentLikes->add($commentLike);
-            $commentLike->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentLike(CommentLike $commentLike): self
-    {
-        if ($this->commentLikes->removeElement($commentLike)) {
-            // set the owning side to null (unless already changed)
-            if ($commentLike->getUser() === $this) {
-                $commentLike->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, SolutionLike>
-     */
-    public function getSolutionLikes(): Collection
-    {
-        return $this->solutionLikes;
-    }
-
-    public function addSolutionLike(SolutionLike $solutionLike): self
-    {
-        if (!$this->solutionLikes->contains($solutionLike)) {
-            $this->solutionLikes->add($solutionLike);
-            $solutionLike->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolutionLike(SolutionLike $solutionLike): self
-    {
-        if ($this->solutionLikes->removeElement($solutionLike)) {
-            // set the owning side to null (unless already changed)
-            if ($solutionLike->getUser() === $this) {
-                $solutionLike->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Like>
      */
     public function getLikes(): Collection
@@ -354,6 +290,37 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($like->getUser() === $this) {
                 $like->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): self
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+            // set the owning side to null (unless already changed)
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
             }
         }
 
