@@ -1,7 +1,0 @@
-# app/config/config.yml or app/config/parameters.yml
-
-parameters:          
-    amazon.AWS_ACCESS_KEY_ID: 'AKIA4J75DV7VXN2WIGU2' # Clé d'accès AWS S3 
-    amazon.AWS_SECRET_ACCESS_KEY: 'KJYMyw7ufDWNONlHgjn0dlRRXpQiecidMF6Hl6sh' # Secret d'accès AWS S3 
-    amazon.AWS_DEFAULT_REGION: 'eu-west-3' # Région AWS S3 
-    amazon.AWS_BUCKET: 'maquequettefile' # Nom du bucket AWS S3
