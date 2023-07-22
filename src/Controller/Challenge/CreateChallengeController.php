@@ -4,16 +4,14 @@ namespace App\Controller\Challenge;
 
 use ApiPlatform\Exception\ItemNotFoundException;
 use ApiPlatform\Validator\Exception\ValidationException;
+use App\Controller\Resource\ResourceController;
 use App\Entity\Challenge;
-use App\Entity\Ressource;
-use App\Entity\User;
 use App\Repository\ChallengeTypeRepository;
 use App\Repository\DifficultyRepository;
 use App\Repository\TagRepository;
 use App\Service\AwsS3Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -23,34 +21,19 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CreateChallengeController extends AbstractController
 {
 
-    private Security $security;
-    private ValidatorInterface $validator;
-    private AwsS3Service $awsS3Service;
-    private DifficultyRepository $difficultyRepository;
-    private ChallengeTypeRepository $challengeTypeRepository;
-    private TagRepository $tagRepository;
-
     public function __construct(
-        Security $security,
-        ValidatorInterface $validator,
-        AwsS3Service $awsS3Service,
-        DifficultyRepository $difficultyRepository,
-        ChallengeTypeRepository $challengeTypeRepository,
-        TagRepository $tagRepository,
-    ){
-        $this->security = $security;
-        $this->validator = $validator;
-        $this->awsS3Service = $awsS3Service;
-        $this->difficultyRepository = $difficultyRepository;
-        $this->challengeTypeRepository = $challengeTypeRepository;
-        $this->tagRepository = $tagRepository;
-    }
+        private readonly ValidatorInterface $validator,
+        private readonly AwsS3Service $awsS3Service,
+        private readonly DifficultyRepository $difficultyRepository,
+        private readonly ChallengeTypeRepository $challengeTypeRepository,
+        private readonly TagRepository $tagRepository,
+    ){ }
 
     public function __invoke(RequestStack $requestStack, Request $request, EntityManagerInterface $em): JsonResponse
     {
         try {
             $challenge = $this->validateChallenge($request->request->all());
-            $resources = $this->validateResources($request, $challenge, $em);
+            (new ResourceController($em, $this->awsS3Service))->validateResources($request, $challenge);
 
             $em->persist($challenge);
             $em->flush();
@@ -62,9 +45,9 @@ class CreateChallengeController extends AbstractController
         }
     }
 
-    protected function validateChallenge(array $inputs): Challenge {
-        //dd($inputs);
-        $user = $this->security->getUser();
+    private function validateChallenge(array $inputs): Challenge
+    {
+        $user = $this->getUser();
 
         // Fetch input
         $inputs['title'] =  array_key_exists('title', $inputs) ? (string) $inputs['title'] : null;
@@ -119,42 +102,5 @@ class CreateChallengeController extends AbstractController
         }
 
         return $challenge;
-    }
-
-    protected function validateResources(Request $request, Challenge $challenge, EntityManagerInterface $em): array {
-        $user = $this->security->getUser();
-        $inputs = $request->request->all();
-        $files = $request->files->all();
-
-        // Retrieve and Create Resources
-        $items = [];
-        if (array_key_exists('resources', $inputs) && is_array($inputs['resources'])){
-            foreach ($inputs['resources'] as $i => $resource){
-                //dd($ressource);
-
-                $resource['label'] =  array_key_exists('label', $resource) ? (string) $resource['label'] : null;
-                $resource['type'] =  array_key_exists('type', $resource) ? (string) $resource['type'] : null;
-
-                if( null === $resource['type']){
-                    throw new ItemNotFoundException('mandatory fields');
-                }
-
-                // Upload to AWS
-                $path = './'.$user->getEmail().'/challenges';
-                $filepath = $this->awsS3Service->uploadFile($path, $files['resources'][$i]['value']);
-
-                // create a Ressource
-                $item = new Ressource();
-                $item->setLabel($resource['label']);
-                $item->setType($resource['type']);
-                $item->setValue($filepath);
-                $item->setChallenge($challenge);
-                $items[] = $item;
-
-                $em->persist($item);
-            }
-        }
-
-        return $items;
     }
 }

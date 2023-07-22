@@ -2,24 +2,25 @@
 
 namespace App\Entity;
 
-use App\Repository\CommentLikeRepository;
+use App\Repository\LikeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CommentLikeRepository::class)]
-#[ORM\Table(name: '`comment_like`')]
-class CommentLike
+#[ORM\Entity(repositoryClass: LikeRepository::class)]
+#[ORM\Table(name: '`like`')]
+class Like
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commentLikes')]
+    #[ORM\ManyToOne(inversedBy: 'likes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'likes')]
-    private ?Comment $comments = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?PolymorphicEntity $target = null;
 
     public function getId(): ?int
     {
@@ -38,14 +39,14 @@ class CommentLike
         return $this;
     }
 
-    public function getComments(): ?Comment
+    public function getTarget(): ?PolymorphicEntity
     {
-        return $this->comments;
+        return $this->target;
     }
 
-    public function setComments(?Comment $comments): self
+    public function setTarget(?PolymorphicEntity $target): self
     {
-        $this->comments = $comments;
+        $this->target = $target;
 
         return $this;
     }

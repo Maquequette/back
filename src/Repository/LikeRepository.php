@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\CommentLike;
+use App\Entity\Like;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<CommentLike>
+ * @extends ServiceEntityRepository<Like>
  *
- * @method CommentLike|null find($id, $lockMode = null, $lockVersion = null)
- * @method CommentLike|null findOneBy(array $criteria, array $orderBy = null)
- * @method CommentLike[]    findAll()
- * @method CommentLike[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Like|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Like|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Like[]    findAll()
+ * @method Like[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CommentLikeRepository extends ServiceEntityRepository
+class LikeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, CommentLike::class);
+        parent::__construct($registry, Like::class);
     }
 
-    public function save(CommentLike $entity, bool $flush = false): void
+    public function save(Like $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class CommentLikeRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(CommentLike $entity, bool $flush = false): void
+    public function remove(Like $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class CommentLikeRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return CommentLike[] Returns an array of CommentLike objects
+//     * @return Like[] Returns an array of Like objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class CommentLikeRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?CommentLike
+//    public function findOneBySomeField($value): ?Like
 //    {
 //        return $this->createQueryBuilder('l')
 //            ->andWhere('l.exampleField = :val')

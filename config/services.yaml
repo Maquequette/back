@@ -28,6 +28,10 @@ services:
         tags:
             - { name: api_platform.doctrine.orm.query_extension.collection }
 
+    App\ApiResource\GetEntityCommentExtension:
+        tags:
+            - { name: api_platform.doctrine.orm.query_extension.collection }
+
     App\ApiResource\AuthOpenApiFactory:
         decorates: 'api_platform.openapi.factory'
         arguments: [ '@App\ApiResource\AuthOpenApiFactory.inner' ]
@@ -38,7 +42,7 @@ services:
         arguments:
             $decorated: '@App\ApiResource\TimestampNormalizer.inner'
 
-    App\State\ChallengeIsLikedProvider:
+    App\State\IsLikedProvider:
         bind:
             $itemProvider: '@api_platform.doctrine.orm.state.item_provider'
             $collectionProvider: '@api_platform.doctrine.orm.state.collection_provider'
@@ -49,3 +53,20 @@ services:
             $AWS_SECRET_ACCESS_KEY: '%env(AWS_SECRET_ACCESS_KEY)%' # Secret d'accès AWS S3 
             $AWS_DEFAULT_REGION: '%env(AWS_DEFAULT_REGION)%' # Région AWS S3 
             $AWS_BUCKET: '%env(AWS_BUCKET)%' # Nom du bucket AWS S3
+
+    comments.from:
+        parent: 'api_platform.doctrine.orm.numeric_filter'
+        arguments: [ { parent.id: ~ } ]
+        tags: [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    comments.sort:
+        parent: 'api_platform.doctrine.orm.order_filter'
+        arguments: [ { createdAt: ~ } ]
+        tags: [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+

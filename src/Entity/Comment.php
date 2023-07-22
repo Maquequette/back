@@ -3,51 +3,88 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Controller\Comment\CommentDislikeController;
+use App\Controller\Comment\CommentLikeController;
+use App\Controller\Comment\CreateCommentController;
+use App\Filter\OrderByLikesCount;
 use App\Repository\CommentRepository;
 use App\Trait\Active;
+use App\Trait\Likes;
 use App\Trait\Timestamp;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
-class Comment
+#[ApiResource(
+    operations: [
+        new Post(
+            controller: CreateCommentController::class,
+        ),
+        new Post(
+            uriTemplate: '/comments/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: CommentLikeController::class,
+            deserialize: false,
+            name: 'CommentLike'
+        ),
+        new Delete(
+            uriTemplate: '/comments/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: CommentDislikeController::class,
+            deserialize: false,
+            name: 'CommentDislike'
+        )
+    ],
+),
+    GetCollection(
+        uriTemplate: '/comments/from',
+        paginationItemsPerPage: 10,
+        paginationPartial: true,
+        normalizationContext: ['groups' => ['Comments'], 'enable_max_depth' => true],
+        filters: ['comments.from', 'comments.sort', OrderByLikesCount::class],
+        name: 'GetCommentsFrom'
+    ),
+    Get(normalizationContext: ['groups' => ['Comment']]),
+    Delete
+]
+class Comment extends PolymorphicEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups([
+        'Comment', 'Comments',
+        'Challenge', 'Challenges'
+    ])]
     private ?User $author = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
+    #[Groups([
+        'Comment', 'Comments',
+        'Challenge', 'Challenges'
+    ])]
     private ?string $content = null;
 
-    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'comments')]
-    private ?self $parent = null;
+    #[ORM\ManyToOne(targetEntity: PolymorphicEntity::class, inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?PolymorphicEntity $parent = null;
 
-    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
-    private Collection $comments;
-
-    #[ORM\OneToMany(mappedBy: 'comments', targetEntity: CommentLike::class)]
-    private Collection $commentLikes;
+    use Likes {
+        Likes::__construct as private __LikesConstruct;
+    }
 
     public function __construct()
     {
-        $this->comments = new ArrayCollection();
-        $this->commentLikes = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
+        parent::__construct();
+        $this->__LikesConstruct();
     }
 
     public function getAuthor(): ?User
@@ -74,12 +111,12 @@ class Comment
         return $this;
     }
 
-    public function getParent(): ?self
+    public function getParent(): ?PolymorphicEntity
     {
         return $this->parent;
     }
 
-    public function setParent(?self $parent): self
+    public function setParent(?PolymorphicEntity $parent): PolymorphicEntity
     {
         $this->parent = $parent;
 
@@ -88,64 +125,4 @@ class Comment
 
     use Active;
     use Timestamp;
-
-    /**
-     * @return Collection<int, self>
-     */
-    public function getComments(): Collection
-    {
-        return $this->comments;
-    }
-
-    public function addComment(self $comment): self
-    {
-        if (!$this->comments->contains($comment)) {
-            $this->comments->add($comment);
-            $comment->setParent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComment(self $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getParent() === $this) {
-                $comment->setParent(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CommentLike>
-     */
-    public function getCommentLikes(): Collection
-    {
-        return $this->commentLikes;
-    }
-
-    public function addCommentLike(CommentLike $commentLike): self
-    {
-        if (!$this->commentLikes->contains($commentLike)) {
-            $this->commentLikes->add($commentLike);
-            $commentLike->setComments($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentLike(CommentLike $commentLike): self
-    {
-        if ($this->commentLikes->removeElement($commentLike)) {
-            // set the owning side to null (unless already changed)
-            if ($commentLike->getComments() === $this) {
-                $commentLike->setComments(null);
-            }
-        }
-
-        return $this;
-    }
 }

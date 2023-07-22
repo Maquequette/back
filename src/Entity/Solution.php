@@ -5,6 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SolutionRepository;
 use App\Trait\Active;
+use App\Trait\Comments;
+use App\Trait\Likes;
+use App\Trait\Resources;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SolutionRepository::class)]
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource]
-class Solution
+class Solution extends PolymorphicEntity
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,16 +34,19 @@ class Solution
     #[ORM\Column]
     private ?bool $visible = null;
 
-    #[ORM\OneToMany(mappedBy: 'solution', targetEntity: Ressource::class)]
-    private Collection $ressources;
+    use Likes {
+        Likes::__construct as private __LikesConstruct;
+    }
 
-    #[ORM\OneToMany(mappedBy: 'solution', targetEntity: SolutionLike::class, orphanRemoval: true)]
-    private Collection $solutionLikes;
+    use Resources {
+        Resources::__construct as private __ResourcesConstruct;
+    }
 
     public function __construct()
     {
-        $this->ressources = new ArrayCollection();
-        $this->solutionLikes = new ArrayCollection();
+        parent::__construct();
+        $this->__LikesConstruct();
+        $this->__ResourcesConstruct();
     }
 
     public function getId(): ?int
@@ -86,64 +92,4 @@ class Solution
 
     use Active;
     use Timestamp;
-
-    /**
-     * @return Collection<int, Ressource>
-     */
-    public function getRessources(): Collection
-    {
-        return $this->ressources;
-    }
-
-    public function addRessource(Ressource $ressource): self
-    {
-        if (!$this->ressources->contains($ressource)) {
-            $this->ressources->add($ressource);
-            $ressource->setSolution($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRessource(Ressource $ressource): self
-    {
-        if ($this->ressources->removeElement($ressource)) {
-            // set the owning side to null (unless already changed)
-            if ($ressource->getSolution() === $this) {
-                $ressource->setSolution(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, SolutionLike>
-     */
-    public function getSolutionLikes(): Collection
-    {
-        return $this->solutionLikes;
-    }
-
-    public function addSolutionLike(SolutionLike $solutionLike): self
-    {
-        if (!$this->solutionLikes->contains($solutionLike)) {
-            $this->solutionLikes->add($solutionLike);
-            $solutionLike->setSolution($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolutionLike(SolutionLike $solutionLike): self
-    {
-        if ($this->solutionLikes->removeElement($solutionLike)) {
-            // set the owning side to null (unless already changed)
-            if ($solutionLike->getSolution() === $this) {
-                $solutionLike->setSolution(null);
-            }
-        }
-
-        return $this;
-    }
 }

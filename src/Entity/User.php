@@ -11,7 +11,6 @@ use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use GuzzleHttp\Promise\Create;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -73,22 +72,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Solution::class, orphanRemoval: true)]
     private Collection $solutions;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CommentLike::class, orphanRemoval: true)]
-    private Collection $commentLikes;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Like::class, orphanRemoval: true)]
+    private Collection $likes;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ChallengeLike::class, orphanRemoval: true)]
-    private Collection $challengeLikes;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: SolutionLike::class, orphanRemoval: true)]
-    private Collection $solutionLikes;
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
+    private Collection $comments;
 
     public function __construct()
     {
         $this->challenges = new ArrayCollection();
         $this->solutions = new ArrayCollection();
-        $this->commentLikes = new ArrayCollection();
-        $this->challengeLikes = new ArrayCollection();
-        $this->solutionLikes = new ArrayCollection();
+        $this->likes = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -272,29 +267,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, CommentLike>
+     * @return Collection<int, Like>
      */
-    public function getCommentLikes(): Collection
+    public function getLikes(): Collection
     {
-        return $this->commentLikes;
+        return $this->likes;
     }
 
-    public function addCommentLike(CommentLike $commentLike): self
+    public function addLike(Like $like): self
     {
-        if (!$this->commentLikes->contains($commentLike)) {
-            $this->commentLikes->add($commentLike);
-            $commentLike->setUser($this);
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeCommentLike(CommentLike $commentLike): self
+    public function removeLike(Like $like): self
     {
-        if ($this->commentLikes->removeElement($commentLike)) {
+        if ($this->likes->removeElement($like)) {
             // set the owning side to null (unless already changed)
-            if ($commentLike->getUser() === $this) {
-                $commentLike->setUser(null);
+            if ($like->getUser() === $this) {
+                $like->setUser(null);
             }
         }
 
@@ -302,59 +297,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, ChallengeLike>
+     * @return Collection<int, Comment>
      */
-    public function getChallengeLikes(): Collection
+    public function getComments(): Collection
     {
-        return $this->challengeLikes;
+        return $this->comments;
     }
 
-    public function addChallengeLike(ChallengeLike $challengeLike): self
+    public function addComment(Comment $comment): self
     {
-        if (!$this->challengeLikes->contains($challengeLike)) {
-            $this->challengeLikes->add($challengeLike);
-            $challengeLike->setUser($this);
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setAuthor($this);
         }
 
         return $this;
     }
 
-    public function removeChallengeLike(ChallengeLike $challengeLike): self
+    public function removeComment(Comment $comment): self
     {
-        if ($this->challengeLikes->removeElement($challengeLike)) {
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
             // set the owning side to null (unless already changed)
-            if ($challengeLike->getUser() === $this) {
-                $challengeLike->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, SolutionLike>
-     */
-    public function getSolutionLikes(): Collection
-    {
-        return $this->solutionLikes;
-    }
-
-    public function addSolutionLike(SolutionLike $solutionLike): self
-    {
-        if (!$this->solutionLikes->contains($solutionLike)) {
-            $this->solutionLikes->add($solutionLike);
-            $solutionLike->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSolutionLike(SolutionLike $solutionLike): self
-    {
-        if ($this->solutionLikes->removeElement($solutionLike)) {
-            // set the owning side to null (unless already changed)
-            if ($solutionLike->getUser() === $this) {
-                $solutionLike->setUser(null);
+            if ($comment->getAuthor() === $this) {
+                $comment->setAuthor(null);
             }
         }
 

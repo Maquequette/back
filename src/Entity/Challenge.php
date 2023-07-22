@@ -18,8 +18,11 @@ use App\Controller\Challenge\ChallengeLikeController;
 use App\Controller\Challenge\CreateChallengeController;
 use App\Filter\MultiSearch;
 use App\Repository\ChallengeRepository;
-use App\State\ChallengeIsLikedProvider;
+use App\State\IsLikedProvider;
 use App\Trait\Active;
+use App\Trait\Comments;
+use App\Trait\Likes;
+use App\Trait\Resources;
 use App\Trait\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -73,22 +76,17 @@ use Symfony\Component\Validator\Constraints\NotBlank;
             name: 'ChallengeDislike'
         )
     ],
-    provider: ChallengeIsLikedProvider::class,
+    provider: IsLikedProvider::class,
 ),
     GetCollection(normalizationContext: ['groups' => ['Challenges', 'Difficulty']]),
-    Get(normalizationContext: ['groups' => ['Challenge']]),
+    Get(normalizationContext: ['groups' => ['Challenge'], 'enable_max_depth' => true]),
     Put, Delete, Patch
 ]
 #[ApiFilter(OrderFilter::class, properties: ['createdAt', 'difficulty.sortLevel'], arguments: ['orderParameterName' => 'order'])]
 #[ApiFilter(MultiSearch::class, properties: ['title', 'description'])]
 #[ApiFilter(NumericFilter::class, properties: ['type.category.id', 'difficulty.id', 'tags.id'])]
-class Challenge
+class Challenge extends PolymorphicEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    #[Groups(['Challenge', 'Challenges'])]
-    private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
@@ -116,10 +114,6 @@ class Challenge
     #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
     private ?ChallengeType $type = null;
 
-    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: Ressource::class)]
-    #[Groups(['Challenge', 'Challenge:POST'])]
-    private Collection $ressources;
-
     #[ORM\Column]
     private ?bool $allowed = true;
 
@@ -127,30 +121,25 @@ class Challenge
     #[Groups(['Challenge'])]
     private Collection $solutions;
 
-    #[ORM\OneToMany(mappedBy: 'challenge', targetEntity: ChallengeLike::class, orphanRemoval: true)]
-    private Collection $challengeLikes;
-
-    #[Groups(['Challenge', 'Challenges'])]
-    private int $challengeLikesCount;
-
-    #[Groups(['Challenge', 'Challenges'])]
-    private bool $isLiked = false;
-
     #[ORM\ManyToMany(targetEntity: Tag::class)]
     #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
     private Collection $tags;
 
-    public function __construct()
-    {
-        $this->ressources = new ArrayCollection();
-        $this->solutions = new ArrayCollection();
-        $this->challengeLikes = new ArrayCollection();
-        $this->tags = new ArrayCollection();
+    use Likes {
+        Likes::__construct as private __LikesConstruct;
     }
 
-    public function getId(): ?int
+    use Resources {
+        Resources::__construct as private __ResourcesConstruct;
+    }
+
+    public function __construct()
     {
-        return $this->id;
+        parent::__construct();
+        $this->__LikesConstruct();
+        $this->__ResourcesConstruct();
+        $this->solutions = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getAuthor(): ?User
@@ -229,36 +218,6 @@ class Challenge
     use Timestamp;
 
     /**
-     * @return Collection<int, Ressource>
-     */
-    public function getRessources(): Collection
-    {
-        return $this->ressources;
-    }
-
-    public function addRessource(Ressource $ressource): self
-    {
-        if (!$this->ressources->contains($ressource)) {
-            $this->ressources->add($ressource);
-            $ressource->setChallenge($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRessource(Ressource $ressource): self
-    {
-        if ($this->ressources->removeElement($ressource)) {
-            // set the owning side to null (unless already changed)
-            if ($ressource->getChallenge() === $this) {
-                $ressource->setChallenge(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Solution>
      */
     public function getSolutions(): Collection
@@ -285,52 +244,6 @@ class Challenge
             }
         }
 
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, ChallengeLike>
-     */
-    public function getChallengeLikes(): Collection
-    {
-        return $this->challengeLikes;
-    }
-
-    public function addChallengeLike(ChallengeLike $challengeLike): self
-    {
-        if (!$this->challengeLikes->contains($challengeLike)) {
-            $this->challengeLikes->add($challengeLike);
-            $challengeLike->setChallenge($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChallengeLike(ChallengeLike $challengeLike): self
-    {
-        if ($this->challengeLikes->removeElement($challengeLike)) {
-            // set the owning side to null (unless already changed)
-            if ($challengeLike->getChallenge() === $this) {
-                $challengeLike->setChallenge(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getChallengeLikesCount(): int
-    {
-        return $this->getChallengeLikes()->count();
-    }
-
-    public function getIsLiked(): bool
-    {
-        return $this->isLiked;
-    }
-
-    public function setIsLiked(bool $isLiked): self
-    {
-        $this->isLiked = $isLiked;
         return $this;
     }
 
