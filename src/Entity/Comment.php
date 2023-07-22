@@ -7,7 +7,10 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use App\Controller\Comment\CommentDislikeController;
+use App\Controller\Comment\CommentLikeController;
 use App\Controller\Comment\CreateCommentController;
+use App\Filter\OrderByLikesCount;
 use App\Repository\CommentRepository;
 use App\Trait\Active;
 use App\Trait\Likes;
@@ -23,10 +26,31 @@ use Symfony\Component\Validator\Constraints\NotBlank;
     operations: [
         new Post(
             controller: CreateCommentController::class,
+        ),
+        new Post(
+            uriTemplate: '/comments/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: CommentLikeController::class,
+            deserialize: false,
+            name: 'CommentLike'
+        ),
+        new Delete(
+            uriTemplate: '/comments/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: CommentDislikeController::class,
+            deserialize: false,
+            name: 'CommentDislike'
         )
-    ]
+    ],
 ),
-    GetCollection(normalizationContext: ['groups' => ['Comments']]),
+    GetCollection(
+        uriTemplate: '/comments/from',
+        paginationItemsPerPage: 10,
+        paginationPartial: true,
+        normalizationContext: ['groups' => ['Comments'], 'enable_max_depth' => true],
+        filters: ['comments.from', 'comments.sort', OrderByLikesCount::class],
+        name: 'GetCommentsFrom'
+    ),
     Get(normalizationContext: ['groups' => ['Comment']]),
     Delete
 ]
@@ -44,7 +68,7 @@ class Comment extends PolymorphicEntity
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
     #[Groups([
-        'Comment',
+        'Comment', 'Comments',
         'Challenge', 'Challenges'
     ])]
     private ?string $content = null;

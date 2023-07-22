@@ -12,13 +12,17 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 trait Comments
 {
 
-    #[MaxDepth(2)]
+    #[MaxDepth(1)]
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Comment::class, orphanRemoval: true)]
-    #[Groups(['Comment', 'Challenge'])]
+    #[Groups([
+        'Comment', 'Comments',
+        'Challenge'
+    ])]
+    #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $comments;
 
     #[Groups([
-        'Comment',
+        'Comment', 'Comments',
         'Challenge', 'Challenges'
     ])]
     private int $commentsCount;
@@ -29,11 +33,16 @@ trait Comments
     }
 
     /**
-     * @return Collection<int, Comment>
+     * @param int|null $limit
+     * @return Collection|array
      */
-    public function getComments(): Collection
+    public function getComments(?int $limit = null): Collection | array
     {
-        return $this->comments;
+        if ($limit === null) {
+            return $this->comments;
+        }
+
+        return $this->comments->slice(0, $limit);
     }
 
     public function addComment(Comment $comment): self

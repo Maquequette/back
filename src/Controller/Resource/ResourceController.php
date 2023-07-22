@@ -8,6 +8,7 @@ use App\Entity\Resource;
 use App\Service\AwsS3Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 
 class ResourceController extends AbstractController
@@ -15,12 +16,13 @@ class ResourceController extends AbstractController
 
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly AwsS3Service $awsS3Service
+        private readonly AwsS3Service $awsS3Service,
+        private readonly Security $security
     ){ }
 
     public function validateResources(Request $request, PolymorphicEntity $target): array
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
         $inputs = $request->request->all();
         $files = $request->files->all();
 

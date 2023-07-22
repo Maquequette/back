@@ -6,6 +6,7 @@ use App\Entity\Like;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,12 +14,13 @@ class LikeController extends AbstractController
 {
 
     public function __construct(
-        private readonly EntityManagerInterface $em
+        private readonly EntityManagerInterface $em,
+        private readonly Security $security
     ){ }
 
     public function like(int $id, ServiceEntityRepository $repository): JsonResponse
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
         $target = $repository->find($id);
 
         $likes = $target->getLikes()->filter(
@@ -51,7 +53,7 @@ class LikeController extends AbstractController
 
     public function dislike(int $id, ServiceEntityRepository $repository): JsonResponse
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
         $target = $repository->find($id);
 
         $likes = $target->getLikes()->filter(

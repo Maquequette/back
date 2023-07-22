@@ -79,7 +79,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
     provider: IsLikedProvider::class,
 ),
     GetCollection(normalizationContext: ['groups' => ['Challenges', 'Difficulty']]),
-    Get(normalizationContext: ['groups' => ['Challenge']]),
+    Get(normalizationContext: ['groups' => ['Challenge'], 'enable_max_depth' => true]),
     Put, Delete, Patch
 ]
 #[ApiFilter(OrderFilter::class, properties: ['createdAt', 'difficulty.sortLevel'], arguments: ['orderParameterName' => 'order'])]
