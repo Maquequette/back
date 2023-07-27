@@ -3,22 +3,46 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
+use App\Controller\Solution\CreateSolutionController;
 use App\Repository\SolutionRepository;
 use App\Trait\Active;
 use App\Trait\Likes;
 use App\Trait\Resources;
 use App\Trait\Timestamp;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\OpenApi\Model;
 
 #[ORM\Entity(repositoryClass: SolutionRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Post(
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            controller: CreateSolutionController::class,
+            openapi: new Model\Operation(
+                requestBody: new Model\RequestBody(
+                    content: new \ArrayObject([
+                        'multipart/form-data' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'recap' => ['type' => 'string'],
+                                    'resources' => ['type' => 'array']
+                                ]
+                            ]
+                        ]
+                    ])
+                )
+            ),
+            denormalizationContext: ['groups' => ['Challenge:POST']],
+            deserialize: false
+        ),
+    ],
+)]
 class Solution extends PolymorphicEntity
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'solutions')]
     #[ORM\JoinColumn(nullable: false)]
@@ -27,6 +51,9 @@ class Solution extends PolymorphicEntity
     #[ORM\ManyToOne(inversedBy: 'solutions')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Challenge $challenge = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $recap = null;
 
     #[ORM\Column]
     private ?bool $visible = null;
@@ -44,11 +71,6 @@ class Solution extends PolymorphicEntity
         parent::__construct();
         $this->__LikesConstruct();
         $this->__ResourcesConstruct();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getAuthor(): ?User
@@ -71,6 +93,18 @@ class Solution extends PolymorphicEntity
     public function setChallenge(?Challenge $challenge): self
     {
         $this->challenge = $challenge;
+
+        return $this;
+    }
+
+    public function getRecap(): ?string
+    {
+        return $this->recap;
+    }
+
+    public function setRecap(?string $recap): self
+    {
+        $this->recap = $recap;
 
         return $this;
     }

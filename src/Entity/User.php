@@ -24,7 +24,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
-        new GetCollection(uriTemplate: '/me', controller: MeController::class, paginationEnabled: false, name: 'me'),
+        new GetCollection(
+            uriTemplate: '/me',
+            controller: MeController::class,
+            paginationEnabled: false,
+            name: 'me'
+        ),
         new Post(
             uriTemplate: '/connect-github',
             inputFormats: ['multipart' => ['multipart/form-data']],

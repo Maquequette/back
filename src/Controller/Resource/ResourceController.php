@@ -3,6 +3,7 @@
 namespace App\Controller\Resource;
 
 use ApiPlatform\Exception\ItemNotFoundException;
+use ApiPlatform\Validator\Exception\ValidationException;
 use App\Entity\PolymorphicEntity;
 use App\Entity\Resource;
 use App\Service\AwsS3Service;
@@ -20,7 +21,7 @@ class ResourceController extends AbstractController
         private readonly Security $security
     ){ }
 
-    public function validateResources(Request $request, PolymorphicEntity $target): array
+    public function validateResources(Request $request, PolymorphicEntity $target, array $forbidden_types = []): array
     {
         $user = $this->security->getUser();
         $inputs = $request->request->all();
@@ -37,6 +38,10 @@ class ResourceController extends AbstractController
 
                 if( null === $resource['type']){
                     throw new ItemNotFoundException('mandatory fields');
+                }
+
+                if (!in_array($resource['type'], Resource::TYPES) || in_array($resource['type'], $forbidden_types) ){
+                    throw new ValidationException(str_replace('$i', $i, 'resource $i type is not accepted'));
                 }
 
                 // Upload to AWS

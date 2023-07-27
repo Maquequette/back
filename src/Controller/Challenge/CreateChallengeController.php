@@ -62,10 +62,12 @@ class CreateChallengeController extends AbstractController
             throw new ItemNotFoundException('mandatory fields');
         }
 
-        $challenge  = new Challenge();
-        $challenge->setAuthor($user);
-        $challenge->setTitle( (string) $inputs['title']);
-        $challenge->setDescription( (string) $inputs['description']);
+        $challenge = new Challenge();
+        $challenge
+            ->setAuthor($user)
+            ->setTitle( (string) $inputs['title'])
+            ->setDescription( (string) $inputs['description'])
+        ;
 
         // Retrieve Difficulty
         if ((int) $inputs['difficulty']){

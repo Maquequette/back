@@ -20,7 +20,6 @@ use App\Filter\MultiSearch;
 use App\Repository\ChallengeRepository;
 use App\State\IsLikedProvider;
 use App\Trait\Active;
-use App\Trait\Comments;
 use App\Trait\Likes;
 use App\Trait\Resources;
 use App\Trait\Timestamp;
@@ -50,7 +49,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
                                     'description' => ['type' => 'string'],
                                     'difficulty' => ['type' => 'int'],
                                     'type' => ['type' => 'int'],
-                                    'ressources' => ['type' => 'array'],
+                                    'resources' => ['type' => 'array'],
                                     'tags' => ['type' => 'array']
                                 ]
                             ]
