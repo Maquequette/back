@@ -5,12 +5,9 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\SolutionRepository;
 use App\Trait\Active;
-use App\Trait\Comments;
 use App\Trait\Likes;
 use App\Trait\Resources;
 use App\Trait\Timestamp;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SolutionRepository::class)]

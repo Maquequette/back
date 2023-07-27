@@ -12,6 +12,7 @@ use App\Repository\TagRepository;
 use App\Service\AwsS3Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -27,13 +28,14 @@ class CreateChallengeController extends AbstractController
         private readonly DifficultyRepository $difficultyRepository,
         private readonly ChallengeTypeRepository $challengeTypeRepository,
         private readonly TagRepository $tagRepository,
+        private readonly Security $security
     ){ }
 
     public function __invoke(RequestStack $requestStack, Request $request, EntityManagerInterface $em): JsonResponse
     {
         try {
             $challenge = $this->validateChallenge($request->request->all());
-            (new ResourceController($em, $this->awsS3Service))->validateResources($request, $challenge);
+            (new ResourceController($em, $this->awsS3Service, $this->security))->validateResources($request, $challenge);
 
             $em->persist($challenge);
             $em->flush();
