@@ -20,3 +20,6 @@ artprima_prometheus_metrics:
     disable_default_promphp_metrics: false
     # used to enable console metrics
     enable_console_metrics: false
+# expose /metrics/prometheus in your application
+app_metrics:
+    resource: '@ArtprimaPrometheusMetricsBundle/Resources/config/routing.xml'
