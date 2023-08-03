@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Controller\User\ConnectGithubController;
 use App\Controller\User\MeController;
 use App\Repository\UserRepository;
 use App\Trait\Active;
@@ -22,7 +24,17 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
-        new GetCollection(uriTemplate: '/me', controller: MeController::class, paginationEnabled: false, name: 'me')
+        new GetCollection(
+            uriTemplate: '/me',
+            controller: MeController::class,
+            paginationEnabled: false,
+            name: 'me'
+        ),
+        new Post(
+            uriTemplate: '/connect-github',
+            inputFormats: ['multipart' => ['multipart/form-data']],
+            controller: ConnectGithubController::class, deserialize: false, name: 'connect-github'
+        )
     ],
     normalizationContext: ['groups' => ['Challenge', 'Challenges']],
 )]

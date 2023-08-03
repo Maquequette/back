@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     token.ttl: '%env(REFRESH_TTL)%'
+    GITHUB_CLIENT_ID: '%env(GITHUB_CLIENT_ID)%'
+    GITHUB_CLIENT_SECRET: '%env(GITHUB_CLIENT_SECRET)%'
 
 services:
 
@@ -49,10 +51,10 @@ services:
 
     App\Service\AwsS3Service:
         arguments:
-            $AWS_ACCESS_KEY_ID: '%env(AWS_ACCESS_KEY_ID)%' # Clé d'accès AWS S3 
-            $AWS_SECRET_ACCESS_KEY: '%env(AWS_SECRET_ACCESS_KEY)%' # Secret d'accès AWS S3 
-            $AWS_DEFAULT_REGION: '%env(AWS_DEFAULT_REGION)%' # Région AWS S3 
-            $AWS_BUCKET: '%env(AWS_BUCKET)%' # Nom du bucket AWS S3
+            $AWS_ACCESS_KEY_ID: '%env(AWS_ACCESS_KEY_ID)%'
+            $AWS_SECRET_ACCESS_KEY: '%env(AWS_SECRET_ACCESS_KEY)%'
+            $AWS_DEFAULT_REGION: '%env(AWS_DEFAULT_REGION)%'
+            $AWS_BUCKET: '%env(AWS_BUCKET)%'
 
     comments.from:
         parent: 'api_platform.doctrine.orm.numeric_filter'

@@ -7,6 +7,7 @@ use App\Repository\ResourceRepository;
 use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -16,7 +17,15 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class Resource
 {
     //type of the resource (ex: file, image, video ...)
-    const TYPES = ['file', 'image'];
+    public const TYPE_FILE = 'file';
+    public const TYPE_IMAGE = 'image';
+    public const TYPE_URL = 'url';
+
+    public const TYPES = [
+        self::TYPE_FILE,
+        self::TYPE_IMAGE,
+        self::TYPE_URL
+    ];
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
