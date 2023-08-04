@@ -25,6 +25,7 @@ trait Resources
      */
     public function getResources(): Collection
     {
+        //dump('ici');
         return $this->resources;
     }
 
