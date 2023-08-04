@@ -8,6 +8,7 @@ use App\Trait\Active;
 use App\Trait\Timestamp;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Self_;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -30,18 +31,22 @@ class Resource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('Challenge, Challenges')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('Challenge, Challenges')]
     private ?string $label = null;
 
     // value of the resource (ex: file URL, ...)
     #[ORM\Column(length: 255)]
     #[NotBlank]
+    #[Groups('Challenge, Challenges')]
     private ?string $value = null;
 
     #[ORM\Column(length: 255)]
     #[Choice(Resource::TYPES)]
+    #[Groups('Challenge, Challenges')]
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'resources')]
