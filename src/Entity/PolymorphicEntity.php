@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use App\Repository\PolymorphicEntityRepository;
 use App\Trait\Comments;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PolymorphicEntityRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -44,6 +45,10 @@ abstract class PolymorphicEntity
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups([
+        'Challenge', 'Challenges',
+        'Comment', 'Comments',
+    ])]
     private ?int $id = null;
 
     public function getId(): ?int

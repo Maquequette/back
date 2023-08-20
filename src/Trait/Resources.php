@@ -12,7 +12,7 @@ trait Resources
 {
 
     #[ORM\OneToMany(mappedBy: 'target', targetEntity: Resource::class)]
-    #[Groups(['Challenge', 'Challenge:POST'])]
+    #[Groups(['Challenge', 'Challenge:POST', 'Challenges'])]
     private Collection $resources;
 
     public function __construct()
@@ -25,6 +25,7 @@ trait Resources
      */
     public function getResources(): Collection
     {
+        //dump('ici');
         return $this->resources;
     }
 
