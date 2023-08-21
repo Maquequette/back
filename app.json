@@ -1,0 +1,17 @@
+{
+    "success_url": "/",
+    "env": {
+      "APP_ENV": "prod",
+      "APP_SECRET": {"generator": "M4qu3qu311e&L0nGu3"},
+      "CORS_ALLOW_ORIGIN": "https://maquequette-f3cc99536d2d.herokuapp.com"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "@auto-scripts",
+            "mkdir -p config/jwt",
+            "openssl genrsa -out config/jwt/private.pem 4096",
+            "openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem",
+            "chmod -R 775 config/"
+        ]    
+    }
+  }
