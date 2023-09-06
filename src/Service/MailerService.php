@@ -20,7 +20,7 @@ class MailerService
         $this->mailer=$MAILER;
         $this->from=$SENDER;
     }
-    public function sendEmailToSomeone(string $someone,string $content,string $subject  ): void
+    public function sendEmailToSomeone(string $someone,string $subject,string $content  ): void
     {
         $email = (new Email())
             ->from($this->from)
