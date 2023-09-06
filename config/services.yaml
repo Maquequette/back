@@ -57,7 +57,6 @@ services:
             $AWS_BUCKET: '%env(AWS_BUCKET)%'
     App\Service\MailerService:
         arguments:
-            $MAILER: '@Symfony\Component\Mailer\MailerInterface;'
             $SENDER: '%env(SENDER)%'
     comments.from:
         parent: 'api_platform.doctrine.orm.numeric_filter'
