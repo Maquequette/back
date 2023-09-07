@@ -55,7 +55,9 @@ services:
             $AWS_SECRET_ACCESS_KEY: '%env(AWS_SECRET_ACCESS_KEY)%'
             $AWS_DEFAULT_REGION: '%env(AWS_DEFAULT_REGION)%'
             $AWS_BUCKET: '%env(AWS_BUCKET)%'
-
+    App\Service\MailerService:
+        arguments:
+            $SENDER: '%env(SENDER)%'
     comments.from:
         parent: 'api_platform.doctrine.orm.numeric_filter'
         arguments: [ { parent.id: ~ } ]
