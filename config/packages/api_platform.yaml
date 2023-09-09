@@ -4,6 +4,9 @@ api_platform:
     description: 'ou moncucul ?'
     version: '1.0.0'
 
+    patch_formats:
+        json: [ 'application/json' ]
+
     defaults:
         pagination_client_items_per_page: true
         pagination_items_per_page: 15
