@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -24,7 +25,8 @@ class SecurityController extends AbstractController
 
     public function __construct(
         private readonly JWTTokenManagerInterface $jwtManager,
-        private readonly RefreshTokenGeneratorInterface $refreshTokenGenerator
+        private readonly RefreshTokenGeneratorInterface $refreshTokenGenerator,
+        private readonly MailerService $mailer
     ){ }
 
     //<editor-fold desc="Register">
@@ -69,6 +71,7 @@ class SecurityController extends AbstractController
         $em->persist($refresh);
         $em->flush();
 
+        $this->mailer->sendEmailToSomeone( $user->getEmail(), "Inscription confirmé", "Merci de votre inscription");
 
         return new JsonResponse([
             'token' => $JWTtoken,
