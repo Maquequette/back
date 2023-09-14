@@ -58,6 +58,12 @@ services:
     App\Service\MailerService:
         arguments:
             $SENDER: '%env(SENDER)%'
+    App\EventSubscriber\ChallengeRegisterListener:
+        autoconfigure: true
+        autowire: true
+        tags:
+            - { name: kernel.event_subscriber,event: kernel.VIEW, priority: 1 }
+
     comments.from:
         parent: 'api_platform.doctrine.orm.numeric_filter'
         arguments: [ { parent.id: ~ } ]
