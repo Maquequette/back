@@ -11,6 +11,10 @@ final class TimestampNormalizer implements NormalizerInterface, DenormalizerInte
 {
 
     private $decorated;
+    private $entityDates = [
+        'Challenge',
+        'Comment'
+    ];
 
     public function __construct(NormalizerInterface $decorated)
     {
@@ -30,7 +34,7 @@ final class TimestampNormalizer implements NormalizerInterface, DenormalizerInte
     {
         $data = $this->decorated->normalize($object, $format, $context);
 
-        if($data['@type'] !== 'Challenge' && array_key_exists('createdAt', $data)){
+        if(!in_array($data['@type'], $this->entityDates) && array_key_exists('createdAt', $data)){
             unset($data['createdAt']);
             unset($data['updatedAt']);
         }

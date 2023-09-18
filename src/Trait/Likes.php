@@ -14,10 +14,10 @@ trait Likes
     #[ORM\OneToMany(mappedBy: 'target', targetEntity: Like::class, orphanRemoval: true)]
     private Collection $likes;
 
-    #[Groups(['Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges'])]
+    #[Groups(['Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'Comment', 'Comments'])]
     private int $likesCount;
 
-    #[Groups(['Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges'])]
+    #[Groups(['Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'Comment', 'Comments'])]
     private bool $isLiked = false;
 
     public function __construct()

@@ -63,12 +63,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[NotBlank(groups: ['Register', 'Update'])]
-    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe'])]
+    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank(groups: ['Register', 'Update'])]
-    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe'])]
+    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -76,7 +76,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         NotBlank(groups: ['Register', 'Update']),
         Email(groups: ['Register', 'Update'])
     ]
-    #[Groups(['User', 'UpdateMe'])]
+    #[Groups(['User', 'UpdateMe', 'Comment', 'Comments'])]
     private ?string $email = null;
 
     #[ORM\Column]

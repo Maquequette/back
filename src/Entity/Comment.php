@@ -12,6 +12,7 @@ use App\Controller\Comment\CommentLikeController;
 use App\Controller\Comment\CreateCommentController;
 use App\Filter\OrderByLikesCount;
 use App\Repository\CommentRepository;
+use App\State\IsLikedProvider;
 use App\Trait\Active;
 use App\Trait\Likes;
 use App\Trait\Timestamp;
@@ -31,6 +32,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
             uriTemplate: '/comments/{id}/like',
             requirements: ['id' => '\d+'],
             controller: CommentLikeController::class,
+            normalizationContext: ['groups' => ['Comment']],
             deserialize: false,
             name: 'CommentLike'
         ),
@@ -42,6 +44,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
             name: 'CommentDislike'
         )
     ],
+    provider: IsLikedProvider::class
 ),
     GetCollection(
         uriTemplate: '/comments/from',

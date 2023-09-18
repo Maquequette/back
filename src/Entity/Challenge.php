@@ -17,7 +17,6 @@ use ApiPlatform\Metadata\Put;
 use App\Controller\Challenge\ChallengeDislikeController;
 use App\Controller\Challenge\ChallengeLikeController;
 use App\Controller\Challenge\CreateChallengeController;
-use App\Controller\Challenge\LikedChallengeController;
 use App\Filter\MultiSearch;
 use App\Repository\ChallengeRepository;
 use App\State\IsLikedProvider;
