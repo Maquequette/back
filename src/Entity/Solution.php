@@ -47,8 +47,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 ),
     GetCollection(
         uriTemplate: '/solutions/from',
-        paginationItemsPerPage: 9,
-        paginationPartial: true,
         normalizationContext: ['groups' => ['Solutions', 'Challenge']],
         filters: ['solutions.from', 'solutions.sort', OrderByLikesCount::class],
         name: 'GetSolutionsFrom'
