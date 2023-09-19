@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Action\PlaceholderAction;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Controller\User\ConnectGithubController;
 use App\Controller\User\MeController;
 use App\Repository\UserRepository;
@@ -33,31 +36,47 @@ use Symfony\Component\Validator\Constraints\NotBlank;
         new Post(
             uriTemplate: '/connect-github',
             inputFormats: ['multipart' => ['multipart/form-data']],
-            controller: ConnectGithubController::class, deserialize: false, name: 'connect-github'
+            controller: ConnectGithubController::class,
+            validationContext: ['groups' => ['Register']],
+            deserialize: false,
+            name: 'connect-github'
         )
     ],
     normalizationContext: ['groups' => ['Challenge', 'Challenges']],
-)]
+),
+    Patch(
+        uriTemplate: '/me/{id}',
+        requirements: ['id' => '\d+'],
+        normalizationContext: ['groups' => ['UpdateMe']],
+        denormalizationContext: ['groups' => ['UpdateMe']],
+        security: "(is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')) and object == user",
+        validationContext: ['groups' => ['Update']]
+    )
+]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['User'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[NotBlank]
-    #[Groups(['User', 'Challenge', 'Challenges'])]
+    #[NotBlank(groups: ['Register', 'Update'])]
+    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
-    #[NotBlank]
-    #[Groups(['User', 'Challenge', 'Challenges'])]
+    #[NotBlank(groups: ['Register', 'Update'])]
+    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[NotBlank, Email]
-    #[Groups(['User'])]
+    #[
+        NotBlank(groups: ['Register', 'Update']),
+        Email(groups: ['Register', 'Update'])
+    ]
+    #[Groups(['User', 'UpdateMe', 'Comment', 'Comments'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -68,14 +87,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[NotBlank]
+    #[NotBlank(groups: ['Register'])]
     private ?string $password = null;
 
-    #[EqualTo(propertyPath: 'password', message: 'Passwords are not identical')]
+    #[EqualTo(propertyPath: 'password', message: 'Passwords are not identical', groups: ['Register'])]
     private ?string $confirm_password = null;
 
     #[ORM\Column]
-    #[Groups(['User'])]
+    #[Groups(['User', 'UpdateMe'])]
     private ?bool $firstConnection = true;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Challenge::class, orphanRemoval: true)]

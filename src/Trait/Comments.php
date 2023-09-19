@@ -15,8 +15,7 @@ trait Comments
     #[MaxDepth(1)]
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Comment::class, orphanRemoval: true)]
     #[Groups([
-        'Comment', 'Comments',
-        'Challenge'
+        'Comment', 'Comments'
     ])]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $comments;

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Action\PlaceholderAction;
 use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
@@ -35,6 +36,20 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
+        new GetCollection(
+            uriTemplate: '/challenges/liked',
+            controller: PlaceholderAction::class,
+            normalizationContext: ['groups' => ['LikedChallenges', 'Difficulty']],
+            security: "is_granted('ROLE_USER')",
+            name: 'LikedChallenges'
+        ),
+        new GetCollection(
+            uriTemplate: '/challenges/created',
+            controller: PlaceholderAction::class,
+            normalizationContext: ['groups' => ['MyChallenges', 'Difficulty']],
+            security: "is_granted('ROLE_USER')",
+            name: 'MyChallenges'
+        ),
         new Post(
             inputFormats: ['multipart' => ['multipart/form-data']],
             controller: CreateChallengeController::class,
@@ -89,28 +104,28 @@ class Challenge extends PolymorphicEntity
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges'])]
     private ?User $author = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST', 'LikedChallenges', 'MyChallenges'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[NotBlank]
-    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST', 'LikedChallenges', 'MyChallenges'])]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST', 'LikedChallenges', 'MyChallenges'])]
     #[ApiProperty(writableLink: false)]
     private ?Difficulty $difficulty = null;
 
     #[ORM\ManyToOne(inversedBy: 'challenges')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST', 'LikedChallenges', 'MyChallenges'])]
     private ?ChallengeType $type = null;
 
     #[ORM\Column]
@@ -121,7 +136,7 @@ class Challenge extends PolymorphicEntity
     private Collection $solutions;
 
     #[ORM\ManyToMany(targetEntity: Tag::class)]
-    #[Groups(['Challenge', 'Challenges', 'Challenge:POST'])]
+    #[Groups(['Challenge', 'Challenges', 'Challenge:POST', 'LikedChallenges', 'MyChallenges'])]
     private Collection $tags;
 
     use Likes {

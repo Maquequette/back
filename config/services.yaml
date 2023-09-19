@@ -55,7 +55,9 @@ services:
             $AWS_SECRET_ACCESS_KEY: '%env(AWS_SECRET_ACCESS_KEY)%'
             $AWS_DEFAULT_REGION: '%env(AWS_DEFAULT_REGION)%'
             $AWS_BUCKET: '%env(AWS_BUCKET)%'
-
+    App\Service\MailerService:
+        arguments:
+            $SENDER: '%env(SENDER)%'
     comments.from:
         parent: 'api_platform.doctrine.orm.numeric_filter'
         arguments: [ { parent.id: ~ } ]
@@ -65,6 +67,22 @@ services:
         public: false
 
     comments.sort:
+        parent: 'api_platform.doctrine.orm.order_filter'
+        arguments: [ { createdAt: ~ } ]
+        tags: [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    solutions.from:
+        parent: 'api_platform.doctrine.orm.numeric_filter'
+        arguments: [ { challenge.id: ~ } ]
+        tags: [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    solutions.sort:
         parent: 'api_platform.doctrine.orm.order_filter'
         arguments: [ { createdAt: ~ } ]
         tags: [ 'api_platform.filter' ]

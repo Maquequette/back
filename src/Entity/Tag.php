@@ -30,17 +30,17 @@ class Tag
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['Tag', 'Tags', 'TagFamily', 'TagFamilies', 'Challenge', 'Challenges'])]
+    #[Groups(['Tag', 'Tags', 'TagFamily', 'TagFamilies', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(['Tag', 'Tags', 'TagFamily', 'TagFamilies', 'Challenge', 'Challenges'])]
+    #[Groups(['Tag', 'Tags', 'TagFamily', 'TagFamilies', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges'])]
     private ?string $label = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Tag', 'TagFamily', 'TagFamilies', 'Challenge', 'Challenges'])]
+    #[Groups(['Tag', 'TagFamily', 'TagFamilies', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges'])]
     private ?Color $color = null;
 
     #[ORM\ManyToOne(inversedBy: 'tags')]

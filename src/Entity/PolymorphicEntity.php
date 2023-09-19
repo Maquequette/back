@@ -18,26 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     2 => Solution::class,
     3 => Comment::class
 ])]
-#[ApiResource(
-    operations: [
-        /*new Get(
-            uriTemplate: '/commentable/{id}/comments',
-            normalizationContext: ['groups' => ['Comments'], 'enable_max_depth' => true],
-        #filters: [],
-        ),*/
-        /*new GetCollection(
-            uriTemplate: '/comments/from',
-            requirements: ['id' => '\d+'],
-            controller: PlaceholderAction::class,
-            normalizationContext: [
-                'groups' => ['Challenge', 'Comment'],
-                'enable_max_depth' => true
-            ],
-            filters: ['entity.exists_filter'],
-            name: 'GetEntityComments'
-        )*/
-    ]
-),
+#[ApiResource,
     Get
 ]
 abstract class PolymorphicEntity

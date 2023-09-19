@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\Solution\CreateSolutionController;
+use App\Filter\OrderByLikesCount;
 use App\Repository\SolutionRepository;
 use App\Trait\Active;
 use App\Trait\Likes;
@@ -13,6 +16,7 @@ use App\Trait\Timestamp;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\OpenApi\Model;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: SolutionRepository::class)]
 #[ORM\HasLifecycleCallbacks]
@@ -40,12 +44,21 @@ use ApiPlatform\OpenApi\Model;
             deserialize: false
         ),
     ],
-)]
+),
+    GetCollection(
+        uriTemplate: '/solutions/from',
+        normalizationContext: ['groups' => ['Solutions', 'Challenge']],
+        filters: ['solutions.from', 'solutions.sort', OrderByLikesCount::class],
+        name: 'GetSolutionsFrom'
+    ),
+    Get
+]
 class Solution extends PolymorphicEntity
 {
 
     #[ORM\ManyToOne(inversedBy: 'solutions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['Challenge', 'Challenges', 'Solutions'])]
     private ?User $author = null;
 
     #[ORM\ManyToOne(inversedBy: 'solutions')]
@@ -53,6 +66,7 @@ class Solution extends PolymorphicEntity
     private ?Challenge $challenge = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['Challenge', 'Challenges', 'Solutions'])]
     private ?string $recap = null;
 
     #[ORM\Column]
