@@ -74,3 +74,19 @@ services:
         autoconfigure: false
         public: false
 
+    solutions.from:
+        parent: 'api_platform.doctrine.orm.numeric_filter'
+        arguments: [ { challenge.id: ~ } ]
+        tags: [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    solutions.sort:
+        parent: 'api_platform.doctrine.orm.order_filter'
+        arguments: [ { createdAt: ~ } ]
+        tags: [ 'api_platform.filter' ]
+        autowire: false
+        autoconfigure: false
+        public: false
+

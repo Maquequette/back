@@ -13,7 +13,8 @@ final class TimestampNormalizer implements NormalizerInterface, DenormalizerInte
     private $decorated;
     private $entityDates = [
         'Challenge',
-        'Comment'
+        'Comment',
+        'Solution'
     ];
 
     public function __construct(NormalizerInterface $decorated)
