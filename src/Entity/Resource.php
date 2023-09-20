@@ -31,22 +31,22 @@ class Resource
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Solution'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Solution'])]
     private ?string $label = null;
 
     // value of the resource (ex: file URL, ...)
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Solution'])]
     private ?string $value = null;
 
     #[ORM\Column(length: 255)]
     #[Choice(Resource::TYPES)]
-    #[Groups(['Challenge', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenges', 'Solution'])]
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'resources')]

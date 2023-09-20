@@ -12,7 +12,7 @@ trait Resources
 {
 
     #[ORM\OneToMany(mappedBy: 'target', targetEntity: Resource::class)]
-    #[Groups(['Challenge', 'Challenge:POST', 'Challenges'])]
+    #[Groups(['Challenge', 'Challenge:POST', 'Challenges', 'Solution'])]
     private Collection $resources;
 
     public function __construct()

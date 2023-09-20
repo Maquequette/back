@@ -15,14 +15,16 @@ trait Comments
     #[MaxDepth(1)]
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Comment::class, orphanRemoval: true)]
     #[Groups([
-        'Comment', 'Comments'
+        'Comment', 'Comments',
+        'Solution'
     ])]
     #[ORM\OrderBy(['createdAt' => 'DESC'])]
     private Collection $comments;
 
     #[Groups([
         'Comment', 'Comments',
-        'Challenge', 'Challenges'
+        'Challenge', 'Challenges',
+        'Solution'
     ])]
     private int $commentsCount;
 
