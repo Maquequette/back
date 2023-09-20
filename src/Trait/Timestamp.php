@@ -9,11 +9,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 trait Timestamp
 {
     #[ORM\Column]
-    #[Groups(['Challenge', 'Challenges', 'Comment', 'Comments'])]
+    #[Groups(['Challenge', 'Challenges', 'Comment', 'Comments', 'Solution', 'Solutions'])]
     private ?DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['Challenge', 'Challenges', 'Comment', 'Comments'])]
+    #[Groups(['Challenge', 'Challenges', 'Comment', 'Comments', 'Solution', 'Solutions'])]
     private ?DateTimeImmutable $updatedAt = null;
 
     public function getCreatedAt(): ?DateTimeImmutable
