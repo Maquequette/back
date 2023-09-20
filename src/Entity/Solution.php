@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use App\Controller\Solution\SolutionDislikeController;
 use App\Controller\Solution\CreateSolutionController;
+use App\Controller\Solution\SolutionLikeController;
 use App\Filter\OrderByLikesCount;
 use App\Repository\SolutionRepository;
 use App\Trait\Active;
@@ -22,6 +25,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 #[ApiResource(
     operations: [
+        new Post(
+            uriTemplate: '/solutions/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: SolutionLikeController::class,
+            normalizationContext: ['groups' => ['Solution']],
+            deserialize: false,
+            name: 'SolutionLike'
+        ),
+        new Delete(
+            uriTemplate: '/solutions/{id}/like',
+            requirements: ['id' => '\d+'],
+            controller: SolutionDislikeController::class,
+            deserialize: false,
+            name: 'SolutionDislike'
+        ),
         new Post(
             inputFormats: ['multipart' => ['multipart/form-data']],
             controller: CreateSolutionController::class,
