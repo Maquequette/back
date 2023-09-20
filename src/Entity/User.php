@@ -63,12 +63,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     #[NotBlank(groups: ['Register', 'Update'])]
-    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments'])]
+    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments', 'Solution'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255)]
     #[NotBlank(groups: ['Register', 'Update'])]
-    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments'])]
+    #[Groups(['User', 'Challenge', 'Challenges', 'LikedChallenges', 'MyChallenges', 'UpdateMe', 'Comment', 'Comments', 'Solution'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 180, unique: true)]

@@ -64,7 +64,8 @@ class Comment extends PolymorphicEntity
     #[ORM\JoinColumn(nullable: false)]
     #[Groups([
         'Comment', 'Comments',
-        'Challenge', 'Challenges'
+        'Challenge', 'Challenges',
+        'Solution'
     ])]
     private ?User $author = null;
 
@@ -72,7 +73,8 @@ class Comment extends PolymorphicEntity
     #[NotBlank]
     #[Groups([
         'Comment', 'Comments',
-        'Challenge', 'Challenges'
+        'Challenge', 'Challenges',
+        'Solution'
     ])]
     private ?string $content = null;
 

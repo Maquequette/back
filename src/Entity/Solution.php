@@ -51,14 +51,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
         filters: ['solutions.from', 'solutions.sort', OrderByLikesCount::class],
         name: 'GetSolutionsFrom'
     ),
-    Get
+    Get(
+        normalizationContext: ['groups' => ['Solution']]
+    )
 ]
 class Solution extends PolymorphicEntity
 {
 
     #[ORM\ManyToOne(inversedBy: 'solutions')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['Challenge', 'Challenges', 'Solutions'])]
+    #[Groups(['Challenge', 'Challenges','Solution', 'Solutions'])]
     private ?User $author = null;
 
     #[ORM\ManyToOne(inversedBy: 'solutions')]
@@ -66,7 +68,7 @@ class Solution extends PolymorphicEntity
     private ?Challenge $challenge = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['Challenge', 'Challenges', 'Solutions'])]
+    #[Groups(['Challenge', 'Challenges', 'Solution', 'Solutions'])]
     private ?string $recap = null;
 
     #[ORM\Column]
